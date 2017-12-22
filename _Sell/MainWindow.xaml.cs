@@ -1,56 +1,45 @@
-﻿using _Hotkey;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using xytools;
-using System.Threading;
+using _Hotkey;
 using _Sell.Model;
 
 namespace _Sell
 {
     public delegate void EnterButtonHandler();
+
     public delegate void KeyEventHandler(KeyEventArgs args);
+
     //public delegate void NumberReturnsFromOuterSpaceHandler(string str);//number returns from thread
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         //public event NumberReturnsFromOuterSpaceHandler OnNumberReturns;
-        public bool isCashLoggingEnabled = false;
-        public bool areDrinksVisible = false;
+        public bool isCashLoggingEnabled;
+        public bool areDrinksVisible;
         public event EnterButtonHandler OnEnterButton;
-        public static CancellationTokenSource cts;
-        public static Thread waitForInputThread;
-        public bool isMultiplicationWaiting = false;
+        public bool isMultiplicationWaiting;
         private HwndSource hWndSource;
         private short Toolsatom;
-        public short[] NmrAtoms = new short[10];
         public Button[] NmrBtns;
-        public int[] NmrActualNumbers = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        public Dictionary<IntPtr, int> numpadToAtom = new Dictionary<IntPtr, int>();
+        public int[] NmrActualNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         public Dictionary<Button, int> dctNmrBtns = new Dictionary<Button, int>();
         public Dictionary<string, int> productAmounts = new Dictionary<string, int>();
         public Dictionary<string, int> productIndexes = new Dictionary<string, int>();
         public List<KeyValuePair<string, int>> productsInOrder = new List<KeyValuePair<string, int>>();
         private Dictionary<Key, KeyEventHandler> localKeyHandlers = new Dictionary<Key, KeyEventHandler>();
-        public int intTempSaved = 0;
+        public int intTempSaved;
         public Price[] lastPrices = new Price[0];
+
         public Price Cash
         {
             get { return _cash; }
@@ -61,19 +50,19 @@ namespace _Sell
                 _SellInfo.cashStand = value.RawValue;
             }
         }
+
         private Price _cash;
+
         public Price total
         {
-            get
-            {
-                return _total;
-            }
+            get { return _total; }
             set
             {
                 _total = value;
                 tbloTotal.Text = value.ToString();
             }
         }
+
         private Price _total;
 
         public MainWindow()
@@ -87,7 +76,8 @@ namespace _Sell
                 checkCashLogging();
                 total = new Price(0);
                 setStatus("Bereit!");
-                NmrBtns = new Button[] { btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine };
+                NmrBtns = new[]
+                    {btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine};
                 initNmrBtns();
                 clearProducts();
             }
@@ -103,8 +93,8 @@ namespace _Sell
         {
             if (_SellInfo.cashStand != -1)
             {
-                this.isCashLoggingEnabled = true;
-                this._cash = new Price(_SellInfo._cashStand);
+                isCashLoggingEnabled = true;
+                _cash = new Price(_SellInfo._cashStand);
                 Display.setSecondLine(_cash.ToString());
                 D.W(_cash.ToString(), "mainwindow cash set to");
                 miSetCash.IsEnabled = true;
@@ -118,12 +108,12 @@ namespace _Sell
             try
             {
                 //lastPrices[lastPrices.GetLength(0)] = value;
-                Price[] tempPrices = new Price[] { prc };
-                this.lastPrices = (Price[])this.lastPrices.Concat<Price>(tempPrices).ToArray<Price>();
+                Price[] tempPrices = {prc};
+                lastPrices = lastPrices.Concat(tempPrices).ToArray();
                 D.W(xy_str.listArrayToString(lastPrices));
                 if (isCashLoggingEnabled)
                 {
-                    this.Cash = prc.Plus(_cash);
+                    Cash = prc.Plus(_cash);
                 }
             }
             catch (Exception ex)
@@ -135,16 +125,16 @@ namespace _Sell
 
         public void clearProducts()
         {
-            this.total = new Price(0);
+            total = new Price(0);
             lbxItems.Items.Clear();
             lbxPrices.Items.Clear();
             lbxItems.Items.Add(String.Format("{0,-40}| {1,-10}| {2,-10}", "Position", "EPreis", "Menge"));
             lbxItems.Items.Add(("".PadLeft(110, '-')));
             lbxPrices.Items.Add("Preis");
             lbxPrices.Items.Add("".PadLeft(30, '-'));
-            this.productAmounts.Clear();
-            this.productIndexes.Clear();
-            this.productsInOrder.Clear();
+            productAmounts.Clear();
+            productIndexes.Clear();
+            productsInOrder.Clear();
         }
 
         public void AddItemToLists(string Name, Price price, bool addToTotal = true)
@@ -173,9 +163,9 @@ namespace _Sell
             int totalAmount = 1;
             if (isMultiplicationWaiting)
             {
-                this.isMultiplicationWaiting = false;
-                this.OnEnterButton -= this.GetItForMultiplication;
-                totalAmount = this.intTempSaved;
+                isMultiplicationWaiting = false;
+                OnEnterButton -= GetItForMultiplication;
+                totalAmount = intTempSaved;
             }
 
             productsInOrder.Add(new KeyValuePair<string, int>(Name, totalAmount));
@@ -199,7 +189,7 @@ namespace _Sell
             bool newProduct = !productAmounts.ContainsKey(Name);
             if (newProduct && modifier < 0)
             {
-                throw new ArgumentOutOfRangeException(""+modifier);
+                throw new ArgumentOutOfRangeException("" + modifier);
             }
             modifier += newProduct ? 0 : productAmounts[Name];
             int index = newProduct ? -1 : productIndexes[Name];
@@ -219,7 +209,8 @@ namespace _Sell
 
         private void updateProduct(int index, string Name, Price singlePrice, int amount)
         {
-            String itemString = String.Format("{0,-40}| {1,-10}| {2,-10}", Name, singlePrice.ToString(), "x" + amount.ToString("00"));
+            String itemString =
+                String.Format("{0,-40}| {1,-10}| {2,-10}", Name, singlePrice, "x" + amount.ToString("00"));
             String priceString = singlePrice.Times(amount).ToString();
             if (index == -1)
             {
@@ -257,14 +248,15 @@ namespace _Sell
                 return;
             }
             Display.setFirstLine("0");
-            this.OnEnterButton -= GetItForSonstiges;
+            OnEnterButton -= GetItForSonstiges;
         }
+
         private void GetItForCash()
         {
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                this.Cash = new Price(intPrice);
+                Cash = new Price(intPrice);
             }
             catch (Exception)
             {
@@ -273,14 +265,15 @@ namespace _Sell
                 return;
             }
             Display.setFirstLine("0");
-            this.OnEnterButton -= GetItForCash;
+            OnEnterButton -= GetItForCash;
         }
+
         private void GetItForCashSub()
         {
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                this.Cash = _cash.Minus(new Price(intPrice));
+                Cash = _cash.Minus(new Price(intPrice));
             }
             catch (Exception)
             {
@@ -289,14 +282,15 @@ namespace _Sell
                 return;
             }
             Display.setFirstLine("0");
-            this.OnEnterButton -= GetItForCashSub;
+            OnEnterButton -= GetItForCashSub;
         }
+
         private void GetItForGgb()
         {
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                Display.setFirstLine(this._total.Minus(new Price(intPrice)).RawValue.ToString());
+                Display.setFirstLine(_total.Minus(new Price(intPrice)).RawValue.ToString());
             }
             catch (Exception)
             {
@@ -305,8 +299,9 @@ namespace _Sell
                 return;
             }
             //Display.setFirstLine("0");
-            this.OnEnterButton -= GetItForGgb;
+            OnEnterButton -= GetItForGgb;
         }
+
         private void GetItForAddition()
         {
             try
@@ -320,7 +315,7 @@ namespace _Sell
                 setStatus("Keine Zahl oder anderer Fehler!");
                 return;
             }
-            this.OnEnterButton -= GetItForAddition;
+            OnEnterButton -= GetItForAddition;
         }
 
         private void GetItForSubtraction()
@@ -336,7 +331,7 @@ namespace _Sell
                 setStatus("Keine Zahl oder anderer Fehler!");
                 return;
             }
-            this.OnEnterButton -= GetItForSubtraction;
+            OnEnterButton -= GetItForSubtraction;
         }
 
         private void GetItForMultiplication()
@@ -352,8 +347,8 @@ namespace _Sell
                 setStatus("Keine Zahl oder anderer Fehler!");
                 return;
             }
-            this.isMultiplicationWaiting = false;
-            this.OnEnterButton -= GetItForMultiplication;
+            isMultiplicationWaiting = false;
+            OnEnterButton -= GetItForMultiplication;
         }
 
         private void GetItForDivision()
@@ -369,14 +364,13 @@ namespace _Sell
                 setStatus("Keine Zahl oder anderer Fehler!");
                 return;
             }
-            this.OnEnterButton -= GetItForDivision;
+            OnEnterButton -= GetItForDivision;
         }
 
         private void btnSonstiges_Click(object sender, RoutedEventArgs e)
         {
-            this.OnEnterButton += this.GetItForSonstiges;
-            this.OnEnterButton -= this.GetItForMultiplication;
-
+            OnEnterButton += GetItForSonstiges;
+            OnEnterButton -= GetItForMultiplication;
         }
 
         private void GetItForSpenden()
@@ -393,49 +387,56 @@ namespace _Sell
                 return;
             }
             Display.setFirstLine("0");
-            this.OnEnterButton -= this.GetItForSpenden;
+            OnEnterButton -= GetItForSpenden;
         }
 
         private void btnSpende_Click(object sender, RoutedEventArgs e)
         {
-            this.OnEnterButton += this.GetItForSpenden;
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            OnEnterButton += GetItForSpenden;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnGulaschsuppe_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Chili con Carne mit Gebäck", new Price(380));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnPunsch_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Heißer Löwe", new Price(350));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnKinderpunsch_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Kinderpunsch", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnHeisserLoewe_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Brüllender Löwe", new Price(450));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnAufstrichBrot_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Aufstrichbrot", new Price(150));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnGluehwein_Click(object sender, RoutedEventArgs e)
         {
-            AddItemToLists("Glühwein", new Price(250));//TODO: Real price
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            AddItemToLists("Glühwein", new Price(250)); //TODO: Real price
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnSchnaps_Click(object sender, RoutedEventArgs e)
@@ -453,14 +454,16 @@ namespace _Sell
         private void btnSpeckstangerl_Click(object sender, RoutedEventArgs e)
         {
             AddItemToLists("Speckstangerl", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             clearProducts();
             setStatus("Alle Produkte entfernt!");
-            gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false;
+            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            areDrinksVisible = false;
         }
 
         private void btnClearLast_Click(object sender, RoutedEventArgs e)
@@ -483,16 +486,17 @@ namespace _Sell
             KeyValuePair<string, int> entry = productsInOrder[productsInOrder.Count - 1];
             productsInOrder.RemoveAt(productsInOrder.Count - 1);
             //productAmounts[entry.Key] = productAmounts[entry.Key] - entry.Value;
-            modifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].RawValue / entry.Value), -1 * entry.Value);
+            modifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].RawValue / entry.Value),
+                -1 * entry.Value);
             //lbxItems.Items.RemoveAt(lbICount - 1);
             //lbxPrices.Items.RemoveAt(lb2ICount - 1);
             //D.W(lastPrices.Length, "lastPrices Lenght");
             if (lastPrices.Length >= 1)
             {
-                total = this._total.Minus(this.lastPrices[lastPrices.Length - 1]);
+                total = _total.Minus(lastPrices[lastPrices.Length - 1]);
                 Cash = _cash.Minus(lastPrices[lastPrices.Length - 1]);
                 if (lastPrices.Length == 1) lastPrices = new Price[] { };
-                else lastPrices = xy_str.SubArray<Price>(lastPrices, 0, lastPrices.Length - 1);
+                else lastPrices = lastPrices.SubArray(0, lastPrices.Length - 1);
                 //D.W(xy_str.listArrayToString(lastPrices));
             }
             setStatus("Letztes Produkt entfernt!");
@@ -509,9 +513,10 @@ namespace _Sell
             {
                 setStatus("Speichern...");
                 D.W("Speichere Rechnung...");
-                string nextRechungName = string.Format("rechnung_{0}_{1:yyyyMMdd_HHmm}.txt", _SellInfo.rechnungsNummer.ToString("0000"), DateTime.Now);
+                string nextRechungName = string.Format("rechnung_{0}_{1:yyyyMMdd_HHmm}.txt",
+                    _SellInfo.rechnungsNummer.ToString("0000"), DateTime.Now);
                 //D.W(nextRechungName, "Speichere Rechung unter dem Namen");
-                string path = System.IO.Path.Combine(_SellInfo.RechnungenPath, nextRechungName);
+                string path = Path.Combine(_SellInfo.RechnungenPath, nextRechungName);
                 D.W(path, "Speichere Rechung unter");
                 StreamWriter fs = File.CreateText(path);
                 fs.WriteLine("".PadLeft(40, '#'));
@@ -528,7 +533,7 @@ namespace _Sell
                     i++;
                 }
                 fs.WriteLine("".PadLeft(40, '-'));
-                fs.WriteLine("|{0,-19}{1,19}|", "Gesamt:", this.total);
+                fs.WriteLine("|{0,-19}{1,19}|", "Gesamt:", total);
                 fs.WriteLine("".PadLeft(40, '-'));
                 fs.WriteLine("Vielen Dank. END");
                 fs.Close();
@@ -564,7 +569,8 @@ namespace _Sell
                 hotkeyManager.registerHotkey(Win32.GetNumpadKeyCode(i), Win32.MOD_NOREPEAT).onPress += onNumKeyPress;
             }
 
-            hotkeyManager.registerHotkey(Convert.ToUInt32('M'), Win32.MOD_NOREPEAT).onPress += h => btnSaveRechnung_Click(null, null); //Print Screen
+            hotkeyManager.registerHotkey(Convert.ToUInt32('M'), Win32.MOD_NOREPEAT).onPress +=
+                h => btnSaveRechnung_Click(null, null); //Print Screen
             localKeyHandlers[Key.Q] = h => btnSonstiges_Click(null, null);
             localKeyHandlers[Key.W] = h => btnSpende_Click(null, null);
             localKeyHandlers[Key.E] = h => btnGulaschsuppe_Click(null, null);
@@ -602,11 +608,11 @@ namespace _Sell
                 int number;
                 if (sender is Button)
                 {
-                    dctNmrBtns.TryGetValue((Button)sender, out number);
+                    dctNmrBtns.TryGetValue((Button) sender, out number);
                 }
                 else if (sender is int)
                 {
-                    number = (int)sender;
+                    number = (int) sender;
                 }
                 else
                 {
@@ -652,55 +658,73 @@ namespace _Sell
         {
             try
             {
-                this.OnEnterButton();
+                OnEnterButton();
             }
-            catch (NullReferenceException) { return; }
+            catch (NullReferenceException)
+            {
+            }
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                this.intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
+                intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
                 Display.setFirstLine("0");
             }
-            catch (Exception) { setStatus("Fehler!"); return; }
-            this.OnEnterButton += this.GetItForAddition;
+            catch (Exception)
+            {
+                setStatus("Fehler!");
+                return;
+            }
+            OnEnterButton += GetItForAddition;
         }
 
         private void btnSubtract_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                this.intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
+                intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
                 Display.setFirstLine("0");
             }
-            catch (Exception) { setStatus("Fehler!"); return; }
-            this.OnEnterButton += this.GetItForSubtraction;
+            catch (Exception)
+            {
+                setStatus("Fehler!");
+                return;
+            }
+            OnEnterButton += GetItForSubtraction;
         }
 
         private void btnTimes_Click(object sender, RoutedEventArgs e)
         {
-            if (this.isMultiplicationWaiting == true) return;
+            if (isMultiplicationWaiting) return;
             try
             {
-                this.intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
+                intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
                 Display.setFirstLine("0");
             }
-            catch (Exception) { setStatus("Fehler!"); return; }
-            this.isMultiplicationWaiting = true;
-            this.OnEnterButton += this.GetItForMultiplication;
+            catch (Exception)
+            {
+                setStatus("Fehler!");
+                return;
+            }
+            isMultiplicationWaiting = true;
+            OnEnterButton += GetItForMultiplication;
         }
 
         private void btnDivide_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                this.intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
+                intTempSaved = Convert.ToInt32(Display.FirstLineItem.Text);
                 Display.setFirstLine("0");
             }
-            catch (Exception) { setStatus("Fehler!"); return; }
-            this.OnEnterButton += this.GetItForDivision;
+            catch (Exception)
+            {
+                setStatus("Fehler!");
+                return;
+            }
+            OnEnterButton += GetItForDivision;
         }
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
@@ -710,12 +734,12 @@ namespace _Sell
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void MenuItem_Click_3(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void btnGetraenke_Click(object sender, RoutedEventArgs e)
@@ -752,10 +776,19 @@ namespace _Sell
             AddItemToLists("Softdrink 0,5l", new Price(150));
             gGetraenkeButtons.Visibility = Visibility.Hidden;
         }
+
         public void changeVisibilityOfGetraenke()
         {
-            if (areDrinksVisible) { gGetraenkeButtons.Visibility = Visibility.Hidden; areDrinksVisible = false; }
-            else { gGetraenkeButtons.Visibility = Visibility.Visible; areDrinksVisible = true; }
+            if (areDrinksVisible)
+            {
+                gGetraenkeButtons.Visibility = Visibility.Hidden;
+                areDrinksVisible = false;
+            }
+            else
+            {
+                gGetraenkeButtons.Visibility = Visibility.Visible;
+                areDrinksVisible = true;
+            }
         }
 
         private void btnEierlikör_Click(object sender, RoutedEventArgs e)
@@ -766,12 +799,12 @@ namespace _Sell
 
         private void MenuItem_Click_4(object sender, RoutedEventArgs e)
         {
-            this.OnEnterButton += this.GetItForCash;
+            OnEnterButton += GetItForCash;
         }
 
         private void miSubtractCash_Click(object sender, RoutedEventArgs e)
         {
-            this.OnEnterButton += this.GetItForCashSub;
+            OnEnterButton += GetItForCashSub;
         }
 
         private void btnGgb_Click(object sender, RoutedEventArgs e)
@@ -786,13 +819,12 @@ namespace _Sell
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                Display.setFirstLine(new Price(intPrice).Minus(this._total).RawValue.ToString());
+                Display.setFirstLine(new Price(intPrice).Minus(_total).RawValue.ToString());
             }
             catch (Exception)
             {
                 //MessageBox.Show("Das ist keine Zahl oder ein anderer Fehler ist aufgetreten!");
                 setStatus("Keine Zahl oder anderer Fehler!");
-                return;
             }
             //Display.setFirstLine("0");
             //this.OnEnterButton -= GetItForGgb;
@@ -816,19 +848,21 @@ namespace _Sell
                 localKeyHandlers[e.Key](e);
             }
         }
-
     }
+
     public static class Display
     {
         public static TextBlock Item;
         public static TextBlock FirstLineItem;
         public static TextBlock SecondLineItem;
+
         public static void initDisplay(TextBlock tblo, TextBlock firstLine, TextBlock secondLine)
         {
-            Display.Item = tblo;
-            Display.FirstLineItem = firstLine;
-            Display.SecondLineItem = secondLine;
+            Item = tblo;
+            FirstLineItem = firstLine;
+            SecondLineItem = secondLine;
         }
+
         public static void setFirstLine(string Text)
         {
             FirstLineItem.Text = Text;
@@ -836,20 +870,23 @@ namespace _Sell
             D.W(FirstLineItem.Text, "Actual text");
             D.W(Item, "Item Text");
         }
+
         public static void setSecondLine(string Text)
         {
-
             SecondLineItem.Text = Text;
         }
+
         public static void setLines(string firstLine, string secondLine)
         {
             FirstLineItem.Text = firstLine;
             SecondLineItem.Text = secondLine;
         }
+
         public static void AddToFirstLine(string txt)
         {
             FirstLineItem.Text += txt;
         }
+
         public static void AddToFirstLine(object obj)
         {
             FirstLineItem.Text += obj.ToString();
