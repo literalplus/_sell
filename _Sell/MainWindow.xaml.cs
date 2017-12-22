@@ -543,7 +543,7 @@ namespace _Sell
             btnClear_Click(null, null);
         }
 
-        private void onToolKeyPress(RegisteredHotkey hotkey)
+        private void onToolButtonClick(object sender, RoutedEventArgs e)
         {
             Tools tlz = new Tools();
             tlz.Show();
@@ -557,7 +557,6 @@ namespace _Sell
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
             HotkeyManager hotkeyManager = new HotkeyManager(this, "_Sell");
-            hotkeyManager.registerHotkey(Convert.ToUInt32('T'), Win32.MOD_CONTROL | Win32.MOD_SHIFT).onPress += onToolKeyPress;
 
             for (int i = 0; i <= 9; i++)
             {
