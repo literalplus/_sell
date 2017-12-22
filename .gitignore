@@ -1,0 +1,9 @@
+.idea
+.vs
+*.suo
+*.user
+*.ncb
+*.sdf
+*.opensdf
+*/bin
+*/obj
