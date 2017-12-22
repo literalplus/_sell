@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using xytools;
 using System.Threading;
+using _Sell.Model;
 
 namespace _Sell
 {
@@ -50,14 +51,14 @@ namespace _Sell
         private Dictionary<Key, KeyEventHandler> localKeyHandlers = new Dictionary<Key, KeyEventHandler>();
         public int intTempSaved = 0;
         public Price[] lastPrices = new Price[0];
-        public Price cash
+        public Price Cash
         {
             get { return _cash; }
             set
             {
                 _cash = value;
                 Display.setSecondLine(value.ToString());
-                _SellInfo.cashStand = value.Cents;
+                _SellInfo.cashStand = value.RawValue;
             }
         }
         private Price _cash;
@@ -122,14 +123,14 @@ namespace _Sell
                 D.W(xy_str.listArrayToString(lastPrices));
                 if (isCashLoggingEnabled)
                 {
-                    this.cash = Price.Add(prc, _cash);
+                    this.Cash = prc.Plus(_cash);
                 }
             }
             catch (Exception ex)
             {
                 D.W(ex.Message, "ex bei addPriceToList()");
             }
-            total = Price.Add(_total, prc);
+            total = _total.Plus(prc);
         }
 
         public void clearProducts()
@@ -219,7 +220,7 @@ namespace _Sell
         private void updateProduct(int index, string Name, Price singlePrice, int amount)
         {
             String itemString = String.Format("{0,-40}| {1,-10}| {2,-10}", Name, singlePrice.ToString(), "x" + amount.ToString("00"));
-            String priceString = Price.Multiply(singlePrice, amount).ToString();
+            String priceString = singlePrice.Times(amount).ToString();
             if (index == -1)
             {
                 productIndexes[Name] = lbxItems.Items.Add(itemString);
@@ -263,7 +264,7 @@ namespace _Sell
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                this.cash = new Price(intPrice);
+                this.Cash = new Price(intPrice);
             }
             catch (Exception)
             {
@@ -279,7 +280,7 @@ namespace _Sell
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                this.cash = Price.Subtract(_cash, new Price(intPrice));
+                this.Cash = _cash.Minus(new Price(intPrice));
             }
             catch (Exception)
             {
@@ -295,7 +296,7 @@ namespace _Sell
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                Display.setFirstLine(Price.Subtract(this._total, new Price(intPrice)).Cents.ToString());
+                Display.setFirstLine(this._total.Minus(new Price(intPrice)).RawValue.ToString());
             }
             catch (Exception)
             {
@@ -482,14 +483,14 @@ namespace _Sell
             KeyValuePair<string, int> entry = productsInOrder[productsInOrder.Count - 1];
             productsInOrder.RemoveAt(productsInOrder.Count - 1);
             //productAmounts[entry.Key] = productAmounts[entry.Key] - entry.Value;
-            modifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].Cents / entry.Value), -1 * entry.Value);
+            modifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].RawValue / entry.Value), -1 * entry.Value);
             //lbxItems.Items.RemoveAt(lbICount - 1);
             //lbxPrices.Items.RemoveAt(lb2ICount - 1);
             //D.W(lastPrices.Length, "lastPrices Lenght");
             if (lastPrices.Length >= 1)
             {
-                total = Price.Subtract(this._total, this.lastPrices[lastPrices.Length - 1]);
-                cash = Price.Subtract(_cash, lastPrices[lastPrices.Length - 1]);
+                total = this._total.Minus(this.lastPrices[lastPrices.Length - 1]);
+                Cash = _cash.Minus(lastPrices[lastPrices.Length - 1]);
                 if (lastPrices.Length == 1) lastPrices = new Price[] { };
                 else lastPrices = xy_str.SubArray<Price>(lastPrices, 0, lastPrices.Length - 1);
                 //D.W(xy_str.listArrayToString(lastPrices));
@@ -785,7 +786,7 @@ namespace _Sell
             try
             {
                 int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                Display.setFirstLine(Price.Subtract(new Price(intPrice), this._total).Cents.ToString());
+                Display.setFirstLine(new Price(intPrice).Minus(this._total).RawValue.ToString());
             }
             catch (Exception)
             {
