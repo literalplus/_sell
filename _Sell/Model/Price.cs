@@ -50,7 +50,7 @@
 
         public override string ToString()
         {
-            return string.Format("€ {0:D2},{1:D2}", Major, Minor);
+            return string.Format("€ {0:D1},{1:D2}", Major, Minor);
         }
     }
 }

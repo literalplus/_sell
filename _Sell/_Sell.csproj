@@ -57,8 +57,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Action\GenericGridAction.cs" />
+    <Compile Include="Action\IGridAction.cs" />
+    <Compile Include="Action\ProductGridAction.cs" />
     <Compile Include="Model\Price.cs" />
     <Compile Include="Model\Product.cs" />
+    <Compile Include="Service\DefaultProductRegistry.cs" />
+    <Compile Include="Service\IProductRegistry.cs" />
     <Compile Include="Tools.xaml.cs">
       <DependentUpon>Tools.xaml</DependentUpon>
     </Compile>

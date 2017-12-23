@@ -14,7 +14,20 @@
             <RowDefinition Height="*" /><!-- buttons zahlen etc -->
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0" Name="gProductButtons" >
+        <Grid Grid.Column="0" Name="ProductButtonsGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+        </Grid>
+<!--        <Grid Grid.Column="0" Name="ProductButtonsGrid" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -90,7 +103,7 @@
                     <TextBlock FontWeight="Bold">öffnen</TextBlock> <TextBlock FontStyle="Italic">V</TextBlock>
                 </TextBlock>
             </Button>
-        </Grid><!-- Produktauswahl -->
+        </Grid>~1~ Produktauswahl @1@-->
         <Grid Grid.Column="0" Name="gGetraenkeButtons" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
