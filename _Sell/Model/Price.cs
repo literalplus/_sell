@@ -2,35 +2,35 @@
 {
     public class Price
     {
-        private static readonly int MINORS_PER_MAJOR = 100;
-        private int major;
-        private int minor;
+        private const int MinorsPerMajor = 100;
+        private readonly int _major;
+        private readonly int _minor;
 
         public Price(int major, int minor)
         {
-            this.major = major;
-            this.minor = minor;
+            this._major = major;
+            this._minor = minor;
         }
 
         public Price(int rawValue)
         {
-            this.minor = rawValue % MINORS_PER_MAJOR;
-            this.major = (rawValue - this.minor) / MINORS_PER_MAJOR;
+            this._minor = rawValue % MinorsPerMajor;
+            this._major = (rawValue - this._minor) / MinorsPerMajor;
         }
 
         public int Major
         {
-            get { return major; }
+            get { return _major; }
         }
 
         public int Minor
         {
-            get { return minor; }
+            get { return _minor; }
         }
 
         public int RawValue
         {
-            get { return major * MINORS_PER_MAJOR + minor; }
+            get { return _major * MinorsPerMajor + _minor; }
         }
 
         public Price Plus(Price other)
