@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using Optional;
 using Optional.Collections;
 
@@ -33,10 +34,10 @@ namespace _Sell.Action
             get { return _pages[_currentPageIndex]; }
         }
 
-        private int CurrentPageIndex
+        public int CurrentPageIndex
         {
             get { return _currentPageIndex; }
-            set
+            private set
             {
                 _currentPageIndex = value;
                 CurrentPage.ApplyToGrid(_grid);
@@ -45,14 +46,9 @@ namespace _Sell.Action
 
         public void Add(IGridAction action)
         {
-            // must always exist - initial page always present, Add() creates new page on overflow:
-            var firstWithSpace = _pages.First(el => el.HasSpace());
-            if (firstWithSpace.GetSpaceLeft() <= 1)
-            {
-                firstWithSpace.Add(new NextPageGridAction(this));
-                firstWithSpace = CreateNewPage();
-            }
-            firstWithSpace.Add(action);
+            _pages.FirstOrNone(el => el.HasSpace())
+                .ValueOr(CreateNewPage)
+                .Add(action);
             CurrentPage.ApplyToGrid(_grid);
         }
 
@@ -65,20 +61,39 @@ namespace _Sell.Action
 
         public void ToNextPage()
         {
-            var nextIndex = CurrentPageIndex + 1;
-            if (nextIndex < 0 || nextIndex >= PageCount)
+            GoToPageOrDefault(CurrentPageIndex + 1, 0);
+        }
+
+        private void GoToPageOrDefault(int nextPage, int defaultPage)
+        {
+            if (nextPage < 0 || nextPage >= PageCount)
             {
-                CurrentPageIndex = 0;
+                CurrentPageIndex = defaultPage;
             }
             else
             {
-                CurrentPageIndex = nextIndex;
+                CurrentPageIndex = nextPage;
             }
         }
 
-        public void HandleKeyPress(Key key)
+        public void ToPreviousPage()
         {
-            CurrentPage.HandleKeyPress(key);
+            GoToPageOrDefault(CurrentPageIndex - 1, PageCount - 1);
+        }
+
+        public void ToFirstPage()
+        {
+            GoToPageOrDefault(0, 0);
+        }
+
+        public void ToLastPage()
+        {
+            GoToPageOrDefault(PageCount - 1, PageCount - 1);
+        }
+
+        public bool HandleKeyPress(Key key)
+        {
+            return CurrentPage.HandleKeyPress(key);
         }
     }
 }

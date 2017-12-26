@@ -23,7 +23,8 @@ namespace _Sell.Service
             new Product(12, "Tee", new Price(1, 50)),
             new Product(13, "Bier", new Price(2, 50)),
             new Product(14, "1/8 Wein", new Price(2, 20)),
-            new Product(15, "Stamperl Schnaps", new Price(2, 50))
+            new Product(15, "Stamperl Schnaps", new Price(2, 50), "Stamperl\nSchnaps"),
+            new Product(16, "Weißer Spritzer", new Price(2, 50), "Weißer\nSpritzer")
         };
 
         private readonly Dictionary<int, Product> _productsDictionary = new Dictionary<int, Product>();

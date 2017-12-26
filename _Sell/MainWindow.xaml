@@ -1,7 +1,8 @@
 ﻿<Window x:Class="_Sell.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="_Sell" Height="350" Width="525" WindowState="Maximized" Loaded="Window_Loaded_1" WindowStyle="None" KeyDown="Window_KeyDown">
+        Title="_Sell" Height="350" Width="525" WindowState="Maximized" Loaded="Window_Loaded_1" WindowStyle="None"
+        KeyDown="Window_KeyDown">
     <Grid>
         <!-- Gulaschsuppe Punsch Kinderpunsch Spenden Heißer Löwe Brot w/ aufstrich glühwein schnaps prosecco speckstangerl getränke(teee bier softdriks wein) Sonstiges = 12(3*4) -->
         <Grid.ColumnDefinitions>
@@ -10,11 +11,12 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1.80*" />
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.1*" />
+            <RowDefinition Height="0.25*" /> <!-- display -->
             <RowDefinition Height="*" /><!-- buttons zahlen etc -->
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0" Name="ProductButtonsGrid">
+        <Grid Grid.Column="0" Name="ProductButtonsGrid" Background="#FF57B01A">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -27,159 +29,42 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
         </Grid>
-<!--        <Grid Grid.Column="0" Name="ProductButtonsGrid" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid Grid.Column="0" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Button Name="btnSonstiges" Grid.Row="0" Grid.Column="0" Click="btnSonstiges_Click" Background="#FFFD790B" Template="{StaticResource tplCubeButton}">
-                <TextBlock>Sonstiges
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ x,xx</TextBlock> <TextBlock FontStyle="Italic">Q</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnSpende" Grid.Row="0" Grid.Column="1" Click="btnSpende_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>Spende
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ x,xx</TextBlock> <TextBlock FontStyle="Italic">W</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnGulaschsuppe" Grid.Row="0" Grid.Column="2" Click="btnGulaschsuppe_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>Chili con
-                    <LineBreak />Carne<LineBreak />
-                    <TextBlock FontWeight="Bold">€ 3,8</TextBlock> <TextBlock FontStyle="Italic">E</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnPunsch" Grid.Row="1" Grid.Column="0" Click="btnPunsch_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>
-                    Heißer<LineBreak />
-                    Löwe<LineBreak />
-                    <TextBlock FontWeight="Bold">€ 3,50</TextBlock> <TextBlock FontStyle="Italic">A</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnKinderpunsch" Grid.Row="1" Grid.Column="1" Click="btnKinderpunsch_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>Kinder-
-                    <LineBreak />punsch<LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock> <TextBlock FontStyle="Italic">S</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnHeisserLoewe" Grid.Row="1" Grid.Column="2" Click="btnHeisserLoewe_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>
-                    Löwe w/<LineBreak />
-                    Brüll<LineBreak />
-                    <TextBlock FontWeight="Bold">€ 4,50</TextBlock> <TextBlock FontStyle="Italic">D</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnAufstrichBrot" Grid.Row="2" Grid.Column="0" Click="btnAufstrichBrot_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>
-                    Aufstrich-<LineBreak />
-                    brot<LineBreak />
-                    <TextBlock FontWeight="Bold">€ 1,50</TextBlock> <TextBlock FontStyle="Italic">Y</TextBlock>
-                </TextBlock></Button>
-            <Button IsEnabled="False" Name="btnSoftdrinks" Grid.Row="2" Grid.Column="1" Click="btnSoftdrinks_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>Softdrinks 0,5l
-                <LineBreak /><LineBreak /> 
-                    <TextBlock FontWeight="Bold">€ 1,50</TextBlock> <TextBlock FontStyle="Italic">X</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnNone" Grid.Row="3" Grid.Column="2" Template="{StaticResource tplCubeButton}" Background="#FFFD790B"></Button>
-            <Button Name="btnNone2" Grid.Row="3" Grid.Column="0" Template="{StaticResource tplCubeButton}" Background="#FFFD790B"></Button>
-            <Button Name="btnSpeckstangerl" Grid.Row="2" Grid.Column="2" Click="btnSpeckstangerl_Click" Template="{StaticResource tplCubeButton}" Background="#FFFD790B">
-                <TextBlock>Speckstangerl
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock> <TextBlock FontStyle="Italic">C</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnGetraenke" Grid.Row="3" Grid.Column="1" Template="{StaticResource tplCubeButton}" Background="#FFFD790B" Click="btnGetraenke_Click">
-                <TextBlock>Sonstiges
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">öffnen</TextBlock> <TextBlock FontStyle="Italic">V</TextBlock>
-                </TextBlock>
-            </Button>
-        </Grid>~1~ Produktauswahl @1@-->
-        <Grid Grid.Column="0" Name="gGetraenkeButtons" Visibility="Hidden">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Name="btnNone3" Grid.Row="1" Grid.Column="1" Template="{StaticResource tplCubeButton}" Background="#FFEEA710" Click="BtnNone3_Click">
-        		<TextBlock>Weißwein<LineBreak/>gespritzt
-                <LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock>
-                </TextBlock>
-        	</Button>
-            <Button Name="btnGespritzter" Grid.Row="1" Grid.Column="0" Template="{StaticResource tplCubeButton}" Background="#FFEEA710" Click="btnGespritzter_Click">
-        		<TextBlock>Glühwein
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 3,50</TextBlock>
-                    <Italic>R</Italic>
-                </TextBlock>
-        	</Button>
-            <Button Name="btnEierlikör" Grid.Row="1" Grid.Column="2" Template="{StaticResource tplCubeButton}" Background="#FFEEA710" Click="btnEierlikör_Click">
-                <TextBlock>Eierlikör
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock>
-                </TextBlock>
+            <Button Grid.Column="0" Template="{StaticResource tplCubeButton}" Background="Chocolate"
+                    Name="FirstPageButton" Click="FirstPageButton_OnClick">
+                🡸
             </Button>
-            <Button Name="btnProsecco" Grid.Row="2" Grid.Column="0" Click="btnProsecco_Click" Template="{StaticResource tplCubeButton}" Background="#FFEEA710">
-                <TextBlock>Prosecco
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 3,00</TextBlock>
-                </TextBlock>
+            <Button Grid.Column="1" Template="{StaticResource tplCubeButton}" Background="Chocolate"
+                    Name="PrevPageButton" Click="PrevPageButton_OnClick">
+                🡨
             </Button>
-            <!--<Button Name="btnSoftdrinks" Template="{StaticResource tplCubeButton}" Grid.Column="2" Grid.Row="2" Background="#FFEEA710" Click="btnSoftdrinks_Click">
-                <TextBlock>Softdrinks<LineBreak />0,5l
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 1,50</TextBlock>
-                </TextBlock>
-            </Button>-->
-            <Button Name="btnTee" Template="{StaticResource tplCubeButton}" Grid.Column="3" Grid.Row="2" Background="#FFEEA710" Click="btnTee_Click">
-                <TextBlock>Tee
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 1,50</TextBlock>
-                </TextBlock>
+            <Button Grid.Column="2" Template="{StaticResource tplCubeButton}" Background="Chocolate"
+                    Name="NextPageButton" Click="NextPageButton_OnClick">
+                🡪
             </Button>
-            <Button Name="btnBier" Template="{StaticResource tplCubeButton}" Grid.Column="0" Grid.Row="3" Background="#FFEEA710" Click="btnBier_Click">
-                <TextBlock>Bier
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnWein" Template="{StaticResource tplCubeButton}" Grid.Column="1" Grid.Row="2" Background="#FFEEA710" Click="btnWein_Click">
-                <TextBlock>1/8 Wein
-                <LineBreak /><LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,20</TextBlock>
-                </TextBlock>
-            </Button>
-            <Button Name="btnSchnaps" Template="{StaticResource tplCubeButton}" Grid.Column="2" Grid.Row="3" Background="#FFEEA710" Click="btnSchnaps_Click">
-                <TextBlock>Schnaps<LineBreak />Stamperl
-                <LineBreak />
-                    <TextBlock FontWeight="Bold">€ 2,50</TextBlock>
-                </TextBlock>
+            <Button Grid.Column="3" Template="{StaticResource tplCubeButton}" Background="Chocolate"
+                    Name="LastPageButton" Click="LastPageButton_OnClick">
+                🡺
             </Button>
         </Grid>
-        <TextBlock Grid.Column="0" Grid.Row="1" Name="tbloNmrDisplay" Foreground="#FFD6F50D" ToolTip="Benutze die Zahlenknöpfe, um einzugeben!" FontSize="36" TextAlignment="Right" FontFamily="Lucida Console" TextWrapping="Wrap">
+        <TextBlock Grid.Column="0" Grid.Row="2" Name="tbloNmrDisplay" Foreground="#FFD6F50D"
+                   ToolTip="Benutze die Zahlenknöpfe, um einzugeben!" FontSize="36" TextAlignment="Right"
+                   FontFamily="Lucida Console" TextWrapping="Wrap">
             <TextBlock.Background>
                 <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                    <GradientStop Color="#FF151515" Offset="0"/>
-                    <GradientStop Color="#FF403A3A" Offset="1"/>
+                    <GradientStop Color="#FF151515" Offset="0" />
+                    <GradientStop Color="#FF403A3A" Offset="1" />
                 </LinearGradientBrush>
-            </TextBlock.Background><TextBlock Name="tbloLineOne">0</TextBlock><LineBreak /><TextBlock Name="tbloLineTwo" FontSize="20"></TextBlock></TextBlock>
-        <Grid Grid.Column="0" Grid.Row="2">
+            </TextBlock.Background>
+            <TextBlock Name="tbloLineOne">0</TextBlock><LineBreak /><TextBlock Name="tbloLineTwo" FontSize="20" />
+        </TextBlock>
+        <Grid Grid.Column="0" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" /><!-- actions -->
                 <ColumnDefinition Width="*" />
@@ -194,53 +79,125 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="4" Name="btnGgb" Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20" Click="btnGgb_Click">GGB</Button>
-            <Button Grid.Row="2" Grid.Column="4" Name="btnShowPrc" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20"></Button>
-            <Button Grid.Row="1" Grid.Column="4" Name="btnClearDisplay" Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20" Click="btnClearDisplay_Click">CD</Button>
-            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct2" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20"></Button>
-            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct3" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20"></Button>
-            <Button Grid.Row="4" Grid.Column="4" Name="btnNoAct4" Template="{StaticResource tplCubeButton}" Background="#FF1847E6" FontSize="20"></Button>
-            <Button Grid.Row="0" Grid.Column="0" Name="btnClear" Click="btnClear_Click" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">C</Button>
-            <Button Grid.Row="1" Grid.Column="0" Name="btnClearLast" Click="btnClearLast_Click" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">CE</Button>
-            <Button Grid.Row="2" Grid.Column="0" Name="btnSaveRechnung" Click="btnSaveRechnung_Click" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">SAVE</Button>
-            <Button Grid.Row="3" Grid.Column="0" Name="btnEnter" Click="btnEnter_Click" Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="16">
+            <Button Grid.Row="0" Grid.Column="4" Name="btnGgb" Template="{StaticResource tplCubeButton}"
+                    Background="#FFC51212" FontSize="20" Click="btnGgb_Click">
+                GGB
+            </Button>
+            <Button Grid.Row="2" Grid.Column="4" Name="btnShowPrc" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" />
+            <Button Grid.Row="1" Grid.Column="4" Name="btnClearDisplay" Template="{StaticResource tplCubeButton}"
+                    Background="#FFC51212" FontSize="20" Click="btnClearDisplay_Click">
+                CD
+            </Button>
+            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct2" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" />
+            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct3" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" />
+            <Button Grid.Row="4" Grid.Column="4" Name="btnNoAct4" Template="{StaticResource tplCubeButton}"
+                    Background="#FF1847E6" FontSize="20" />
+            <Button Grid.Row="0" Grid.Column="0" Name="btnClear" Click="btnClear_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">
+                C
+            </Button>
+            <Button Grid.Row="1" Grid.Column="0" Name="btnClearLast" Click="btnClearLast_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">
+                CE
+            </Button>
+            <Button Grid.Row="2" Grid.Column="0" Name="btnSaveRechnung" Click="btnSaveRechnung_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20">
+                SAVE
+            </Button>
+            <Button Grid.Row="3" Grid.Column="0" Name="btnEnter" Click="btnEnter_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="16" IsDefault="true">
                 <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Minimieren" Click="MenuItem_Click_2" />
                         <MenuItem Header="Schließen" Click="MenuItem_Click_3" />
                         <MenuItem Header="Tools..." Click="onToolButtonClick" />
-                        <MenuItem Name="miSetCash" Header="Kasse setzen zu... (eintippen + ENTER)" Click="MenuItem_Click_4" IsEnabled="False" />
-                        <MenuItem Name="miSubtractCash" Header="Aus Kasse entfernen... (eintippen + ENTER)" IsEnabled="False" Click="miSubtractCash_Click" />
+                        <MenuItem Name="miSetCash" Header="Kasse setzen zu... (eintippen + ENTER)"
+                                  Click="MenuItem_Click_4" IsEnabled="False" />
+                        <MenuItem Name="miSubtractCash" Header="Aus Kasse entfernen... (eintippen + ENTER)"
+                                  IsEnabled="False" Click="miSubtractCash_Click" />
                     </ContextMenu>
-                </Button.ContextMenu> ENTER</Button>
-            <Button Grid.Row="0" Grid.Column="1" Name="btnOne" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">1</Button>
-            <Button Grid.Row="0" Grid.Column="2" Name="btnTwo" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">2</Button>
-            <Button Grid.Row="0" Grid.Column="3" Name="btnThree" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">3</Button>
-            <Button Grid.Row="1" Grid.Column="1" Name="btnFour" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">4</Button>
-            <Button Grid.Row="1" Grid.Column="2" Name="btnFive" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">5</Button>
-            <Button Grid.Row="1" Grid.Column="3" Name="btnSix" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">6</Button>
-            <Button Grid.Row="2" Grid.Column="1" Name="btnSeven" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">7</Button>
-            <Button Grid.Row="2" Grid.Column="2" Name="btnEight" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">8</Button>
-            <Button Grid.Row="2" Grid.Column="3" Name="btnNine" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">9</Button>
-            <Button Grid.Row="3" Grid.Column="1" Name="btnZeroZero" Click="btnZeroZero_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">00</Button>
-            <Button Grid.Row="3" Grid.Column="2" Name="btnZero" Click="NmrBtns_Click" Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">0</Button>
-            <Button Grid.Row="3" Grid.Column="3" Name="btnBackspace" Click="btnBackspace_Click" Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20">
+                </Button.ContextMenu>
+                ENTER
+            </Button>
+            <Button Grid.Row="0" Grid.Column="1" Name="btnOne" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                1
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Name="btnTwo" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                2
+            </Button>
+            <Button Grid.Row="0" Grid.Column="3" Name="btnThree" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                3
+            </Button>
+            <Button Grid.Row="1" Grid.Column="1" Name="btnFour" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                4
+            </Button>
+            <Button Grid.Row="1" Grid.Column="2" Name="btnFive" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                5
+            </Button>
+            <Button Grid.Row="1" Grid.Column="3" Name="btnSix" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                6
+            </Button>
+            <Button Grid.Row="2" Grid.Column="1" Name="btnSeven" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                7
+            </Button>
+            <Button Grid.Row="2" Grid.Column="2" Name="btnEight" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                8
+            </Button>
+            <Button Grid.Row="2" Grid.Column="3" Name="btnNine" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                9
+            </Button>
+            <Button Grid.Row="3" Grid.Column="1" Name="btnZeroZero" Click="btnZeroZero_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                00
+            </Button>
+            <Button Grid.Row="3" Grid.Column="2" Name="btnZero" Click="NmrBtns_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFB31FDE" FontSize="20">
+                0
+            </Button>
+            <Button Grid.Row="3" Grid.Column="3" Name="btnBackspace" Click="btnBackspace_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Click="MenuItem_Click_1" Header="Auf Null setzen"></MenuItem>
+                        <MenuItem Click="MenuItem_Click_1" Header="Auf Null setzen" />
                     </ContextMenu>
-                </Button.ContextMenu> ←</Button>
-            <Button Grid.Row="4" Grid.Column="0" Name="btnAdd" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20" Click="btnAdd_Click">+</Button>
-            <Button Grid.Row="4" Grid.Column="1" Name="btnSubtract" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20" Click="btnSubtract_Click">-</Button>
-            <Button Grid.Row="4" Grid.Column="2" Name="btnTimes" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20" Click="btnTimes_Click">*</Button>
-            <Button Grid.Row="4" Grid.Column="3" Name="btnDivide" Template="{StaticResource tplCubeButton}" Background="#FF71C709" FontSize="20" Click="btnDivide_Click">/</Button>
+                </Button.ContextMenu>
+                ←
+            </Button>
+            <Button Grid.Row="4" Grid.Column="0" Name="btnAdd" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" Click="btnAdd_Click">
+                +
+            </Button>
+            <Button Grid.Row="4" Grid.Column="1" Name="btnSubtract" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" Click="btnSubtract_Click">
+                -
+            </Button>
+            <Button Grid.Row="4" Grid.Column="2" Name="btnTimes" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" Click="btnTimes_Click">
+                *
+            </Button>
+            <Button Grid.Row="4" Grid.Column="3" Name="btnDivide" Template="{StaticResource tplCubeButton}"
+                    Background="#FF71C709" FontSize="20" Click="btnDivide_Click">
+                /
+            </Button>
         </Grid>
         <!--
         ***************************
         * LISTBOXES               *
         ***************************        
         -->
-        <Grid Grid.Column="1" Grid.RowSpan="3" ScrollViewer.VerticalScrollBarVisibility="Disabled">
+        <Grid Grid.Column="1" Grid.RowSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" /><!-- liste -->
                 <RowDefinition Height="42" />
@@ -249,30 +206,36 @@
                 <ColumnDefinition Width="4*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Grid Grid.Row="0" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="4*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-            <ListBox Name="lbxItems" Grid.Row="0" FontSize="28" Background="#FF57B01A" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" ToolTip="Auflistung der abgerechneten Produkte" FontFamily="Courier New">
-                
-            </ListBox>
-                <!--<ListBox Name="lbxSinglePrices" Grid.Row="0" Grid.Column="1" FontSize="28" BorderThickness="0" Background="#FFE6A212" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"></ListBox>
-                <ListBox Name="lbxTimes" Grid.Row="0" Grid.Column="1" FontSize="28" BorderThickness="0" Background="#FFE6A212" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled"></ListBox>-->
-                <ListBox Name="lbxPrices" Grid.Row="0" Grid.Column="1" FontSize="28" BorderThickness="0" Background="#FFE6A212" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" FontFamily="Courier New">
-                
-            </ListBox>
+                <ListBox Name="lbxItems" Grid.Row="0" FontSize="28" Background="#FF57B01A"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0"
+                         ToolTip="Auflistung der abgerechneten Produkte" FontFamily="Courier New" />
+                <ListBox Name="lbxPrices" Grid.Row="0" Grid.Column="1" FontSize="28" BorderThickness="0"
+                         Background="#FFE6A212" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled" FontFamily="Courier New" />
             </Grid>
             <TextBlock Grid.Row="1" FontSize="32" LineHeight="35" Background="#FF2664D1" FontFamily="Courier New">Total:</TextBlock>
-            <TextBlock Grid.Row="1" FontSize="32" LineHeight="35" Grid.Column="1" Name="tbloTotal" Background="#FF2664D1" FontFamily="Courier New">0,00€</TextBlock>
+            <TextBlock Grid.Row="1" FontSize="32" LineHeight="35" Grid.Column="1" Name="tbloTotal"
+                       Background="#FF2664D1" FontFamily="Courier New">
+                0,00€
+            </TextBlock>
         </Grid><!-- Liste -->
-        <TextBlock Grid.Row="3" Grid.Column="0" Name="tbloStatus" Grid.ColumnSpan="2" FontSize="32" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" LineHeight="35" Padding="15,0,0,0">
+        <TextBlock Grid.Row="4" Grid.Column="0" Name="tbloStatus" Grid.ColumnSpan="2" FontSize="32"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.VerticalScrollBarVisibility="Disabled" LineHeight="35" Padding="15,0,0,0">
             <TextBlock.Background>
                 <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                    <GradientStop Color="#FFC5C5C5" Offset="0"/>
-                    <GradientStop Color="#FFC1C1C1" Offset="1"/>
+                    <GradientStop Color="#FFC5C5C5" Offset="0" />
+                    <GradientStop Color="#FFC1C1C1" Offset="1" />
                 </LinearGradientBrush>
-            </TextBlock.Background>_Sell initialisiert!</TextBlock>
+            </TextBlock.Background>
+            _Sell initialisiert!
+        </TextBlock>
     </Grid>
 </Window>

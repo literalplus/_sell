@@ -29,10 +29,7 @@ namespace _Sell
         public bool areDrinksVisible;
         public event EnterButtonHandler OnEnterButton = () => { };
         public bool isMultiplicationWaiting;
-        private HwndSource hWndSource;
-        private short Toolsatom;
         public Button[] NmrBtns;
-        public int[] NmrActualNumbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
         public Dictionary<Button, int> dctNmrBtns = new Dictionary<Button, int>();
         public Dictionary<string, int> productAmounts = new Dictionary<string, int>();
         public Dictionary<string, int> productIndexes = new Dictionary<string, int>();
@@ -114,39 +111,10 @@ namespace _Sell
             }
         }
 
-        private IGridAction ProductIdToAction(int productId)
-        {
-            if (_productRegistry.HasProduct(productId))
-            {
-                var product = _productRegistry.GetProduct(productId);
-                return new ProductGridAction(product, HandleProductButtonClick);
-            }
-            switch (productId)
-            {
-                case -2:
-                    return new GenericGridAction(
-                        () => btnGetraenke_Click(null, null),
-                        "Öffnen", ""
-                    );
-                case -3:
-                    return new GenericGridAction(
-                        () => btnSonstiges_Click(null, null),
-                        "Sonstiges", "€ xx,xx"
-                    );
-                case -4:
-                    return new GenericGridAction(
-                        () => btnSpende_Click(null, null),
-                        "Spende", "€ xx,xx"
-                    );
-                default:
-                    return new GenericGridAction(() => { }, "");
-            }
-        }
-
         private void HandleProductButtonClick(Product product)
         {
             AddItemToLists(product.Name, product.Price);
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
+            btnEnter.Focus();
             areDrinksVisible = false;
         }
 
@@ -411,27 +379,13 @@ namespace _Sell
         private void btnSpende_Click(object sender, RoutedEventArgs e)
         {
             OnEnterButton += GetItForSpenden;
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
             areDrinksVisible = false;
-        }
-
-        private void btnSchnaps_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Schnaps", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
-        private void btnProsecco_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Prosecco", new Price(300));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             clearProducts();
             setStatus("Alle Produkte entfernt!");
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
             areDrinksVisible = false;
         }
 
@@ -539,6 +493,8 @@ namespace _Sell
             localKeyHandlers[Key.Subtract] = h => btnSubtract_Click(null, null);
             localKeyHandlers[Key.Divide] = h => btnDivide_Click(null, null);
             localKeyHandlers[Key.Decimal] = h => btnZeroZero_Click(null, null);
+            localKeyHandlers[Key.Left] = _ => PrevPageButton_OnClick(null, null);
+            localKeyHandlers[Key.Right] = _ => NextPageButton_OnClick(null, null);
         }
 
         private void removeFirstZeroOnDisplay()
@@ -598,13 +554,7 @@ namespace _Sell
 
         private void btnEnter_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                OnEnterButton();
-            }
-            catch (NullReferenceException)
-            {
-            }
+            OnEnterButton();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
@@ -684,55 +634,6 @@ namespace _Sell
             Close();
         }
 
-        private void btnGetraenke_Click(object sender, RoutedEventArgs e)
-        {
-            changeVisibilityOfGetraenke();
-        }
-
-        private void btnGespritzter_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Glühwein", new Price(350));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
-        private void btnWein_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Wein", new Price(220));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
-        private void btnBier_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Bier", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
-        private void btnTee_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Tee", new Price(150));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
-        public void changeVisibilityOfGetraenke()
-        {
-            if (areDrinksVisible)
-            {
-                gGetraenkeButtons.Visibility = Visibility.Hidden;
-                areDrinksVisible = false;
-            }
-            else
-            {
-                gGetraenkeButtons.Visibility = Visibility.Visible;
-                areDrinksVisible = true;
-            }
-        }
-
-        private void btnEierlikör_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Eierlikör", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
         private void MenuItem_Click_4(object sender, RoutedEventArgs e)
         {
             OnEnterButton += GetItForCash;
@@ -761,19 +662,37 @@ namespace _Sell
             Display.setFirstLine("0");
         }
 
-        void BtnNone3_Click(object sender, RoutedEventArgs e)
-        {
-            AddItemToLists("Weißwein gespritzt", new Price(250));
-            gGetraenkeButtons.Visibility = Visibility.Hidden;
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            _productGrid.HandleKeyPress(e.Key);
-            if (localKeyHandlers.ContainsKey(e.Key))
+            if (_productGrid.HandleKeyPress(e.Key))
+            {
+                e.Handled = true;
+            }
+            else if (localKeyHandlers.ContainsKey(e.Key))
             {
                 localKeyHandlers[e.Key](e);
+                e.Handled = true;
             }
+        }
+
+        private void FirstPageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _productGrid.ToFirstPage();
+        }
+
+        private void PrevPageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _productGrid.ToPreviousPage();
+        }
+
+        private void NextPageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _productGrid.ToNextPage();
+        }
+
+        private void LastPageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _productGrid.ToLastPage();
         }
     }
 

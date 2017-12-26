@@ -76,10 +76,11 @@ namespace _Sell.Action
             return button;
         }
 
-        public void HandleKeyPress(Key key)
+        public bool HandleKeyPress(Key key)
         {
-            _meta.HotKeys.IndexForKey(key)
-                .MatchSome(index => _actions[index].HandleClick());
+            var indexForKey = _meta.HotKeys.IndexForKey(key);
+            indexForKey .MatchSome(index => _actions[index].HandleClick());
+            return indexForKey.HasValue;
         }
 
         public int GetSpaceLeft()

@@ -64,7 +64,6 @@
     <Compile Include="Action\GridHotKeys.cs" />
     <Compile Include="Action\GridMeta.cs" />
     <Compile Include="Action\IGridAction.cs" />
-    <Compile Include="Action\NextPageGridAction.cs" />
     <Compile Include="Action\ProductGridAction.cs" />
     <Compile Include="Action\ProductGrid.cs" />
     <Compile Include="Action\ProductGridPage.cs" />
