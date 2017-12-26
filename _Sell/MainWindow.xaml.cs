@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 using xytools;
 using _Hotkey;
 using _Sell.Action;
@@ -39,11 +38,6 @@ namespace _Sell
         public Price[] lastPrices = new Price[0];
         private IProductRegistry _productRegistry = new DefaultProductRegistry();
         private ProductGrid _productGrid;
-
-        private int[][] _firstPageProducts =
-        {
-            new[] {-3, -4, 1}, new[] {2, 3, 4}, new[] {5, 6, 7}, new[] {8, -2, 9}
-        };
 
         public Price Cash
         {
@@ -278,21 +272,6 @@ namespace _Sell
             OnEnterButton -= GetItForCashSub;
         }
 
-        private void GetItForGgb()
-        {
-            try
-            {
-                int intPrice = Convert.ToInt32(Display.FirstLineItem.Text);
-                Display.setFirstLine(_total.Minus(new Price(intPrice)).RawValue.ToString());
-            }
-            catch (Exception)
-            {
-                setStatus("Keine Zahl oder anderer Fehler!");
-                return;
-            }
-            OnEnterButton -= GetItForGgb;
-        }
-
         private void GetItForAddition()
         {
             try
@@ -492,7 +471,6 @@ namespace _Sell
             localKeyHandlers[Key.Add] = h => btnAdd_Click(null, null);
             localKeyHandlers[Key.Subtract] = h => btnSubtract_Click(null, null);
             localKeyHandlers[Key.Divide] = h => btnDivide_Click(null, null);
-            localKeyHandlers[Key.Decimal] = h => btnZeroZero_Click(null, null);
             localKeyHandlers[Key.Left] = _ => PrevPageButton_OnClick(null, null);
             localKeyHandlers[Key.Right] = _ => NextPageButton_OnClick(null, null);
         }
@@ -529,13 +507,6 @@ namespace _Sell
             {
                 setStatus("Ein Fehler ist aufgetreten!");
             }
-        }
-
-        private void btnZeroZero_Click(object sender, RoutedEventArgs e)
-        {
-            removeFirstZeroOnDisplay();
-            if (Display.FirstLineItem.Text == "") return;
-            Display.AddToFirstLine("00");
         }
 
         private void btnBackspace_Click(object sender, RoutedEventArgs e)
@@ -657,11 +628,6 @@ namespace _Sell
             }
         }
 
-        private void btnClearDisplay_Click(object sender, RoutedEventArgs e)
-        {
-            Display.setFirstLine("0");
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (_productGrid.HandleKeyPress(e.Key))
@@ -720,11 +686,6 @@ namespace _Sell
         public static void setSecondLine(string Text)
         {
             SecondLineItem.Text = Text;
-        }
-
-        public static void AddToFirstLine(string txt)
-        {
-            FirstLineItem.Text += txt;
         }
 
         public static void AddToFirstLine(object obj)

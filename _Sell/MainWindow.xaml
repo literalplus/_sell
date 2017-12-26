@@ -10,9 +10,9 @@
             <ColumnDefinition Width="4.5*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1.80*" />
-            <RowDefinition Height="0.1*" />
-            <RowDefinition Height="0.25*" /> <!-- display -->
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="0.15*" />
+            <RowDefinition Height="0.35*" /> <!-- display -->
             <RowDefinition Height="*" /><!-- buttons zahlen etc -->
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
@@ -78,39 +78,23 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="4" Name="btnGgb" Template="{StaticResource tplCubeButton}"
+            <Button Grid.Row="1" Grid.Column="4" Name="btnGgb" Template="{StaticResource tplCubeButton}"
                     Background="#FFC51212" FontSize="20" Click="btnGgb_Click">
                 GGB
             </Button>
-            <Button Grid.Row="2" Grid.Column="4" Name="btnShowPrc" Template="{StaticResource tplCubeButton}"
+            <Button Grid.Row="2" Grid.Column="0" Name="btnShowPrc" Template="{StaticResource tplCubeButton}"
                     Background="#ffa000" FontSize="20" />
-            <Button Grid.Row="1" Grid.Column="4" Name="btnClearDisplay" Template="{StaticResource tplCubeButton}"
-                    Background="#FFC51212" FontSize="20" Click="btnClearDisplay_Click">
-                CD
-            </Button>
-            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct2" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" />
-            <Button Grid.Row="3" Grid.Column="4" Name="btnNoAct3" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" />
-            <Button Grid.Row="4" Grid.Column="4" Name="btnNoAct4" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" />
-            <Button Grid.Row="0" Grid.Column="0" Name="btnClear" Click="btnClear_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#ffa000" FontSize="20">
-                C
-            </Button>
             <Button Grid.Row="1" Grid.Column="0" Name="btnClearLast" Click="btnClearLast_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#ffa000" FontSize="20">
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20">
                 CE
             </Button>
-            <Button Grid.Row="2" Grid.Column="0" Name="btnSaveRechnung" Click="btnSaveRechnung_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#ffa000" FontSize="20">
+            <Button Grid.Row="0" Grid.Column="0" Name="btnSaveRechnung" Click="btnSaveRechnung_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20">
                 SAVE
             </Button>
-            <Button Grid.Row="3" Grid.Column="0" Name="btnEnter" Click="btnEnter_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="16" IsDefault="true">
+            <Button Grid.Row="2" Grid.Column="4" Name="btnEnter" Click="btnEnter_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="32" IsDefault="true">
                 <Button.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Minimieren" Click="MenuItem_Click_2" />
@@ -122,7 +106,16 @@
                                   IsEnabled="False" Click="miSubtractCash_Click" />
                     </ContextMenu>
                 </Button.ContextMenu>
-                ENTER
+                ↵
+            </Button>
+            <Button Grid.Row="0" Grid.Column="4" Name="btnBackspace" Click="btnBackspace_Click"
+                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="28">
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Click="MenuItem_Click_1" Header="Auf Null setzen" />
+                    </ContextMenu>
+                </Button.ContextMenu>
+                ←
             </Button>
             <Button Grid.Row="0" Grid.Column="1" Name="btnOne" Click="NmrBtns_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
@@ -160,38 +153,9 @@
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 9
             </Button>
-            <Button Grid.Row="3" Grid.Column="1" Name="btnZeroZero" Click="btnZeroZero_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
-                00
-            </Button>
-            <Button Grid.Row="3" Grid.Column="2" Name="btnZero" Click="NmrBtns_Click"
+            <Button Grid.Row="2" Grid.Column="0" Name="btnZero" Click="NmrBtns_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 0
-            </Button>
-            <Button Grid.Row="3" Grid.Column="3" Name="btnBackspace" Click="btnBackspace_Click"
-                    Template="{StaticResource tplCubeButton}" Background="#FFC51212" FontSize="20">
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Click="MenuItem_Click_1" Header="Auf Null setzen" />
-                    </ContextMenu>
-                </Button.ContextMenu>
-                ←
-            </Button>
-            <Button Grid.Row="4" Grid.Column="0" Name="btnAdd" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" Click="btnAdd_Click">
-                +
-            </Button>
-            <Button Grid.Row="4" Grid.Column="1" Name="btnSubtract" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" Click="btnSubtract_Click">
-                -
-            </Button>
-            <Button Grid.Row="4" Grid.Column="2" Name="btnTimes" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" Click="btnTimes_Click">
-                *
-            </Button>
-            <Button Grid.Row="4" Grid.Column="3" Name="btnDivide" Template="{StaticResource tplCubeButton}"
-                    Background="#ffa000" FontSize="20" Click="btnDivide_Click">
-                /
             </Button>
         </Grid>
         <Grid Grid.Column="1" Grid.RowSpan="4" ScrollViewer.VerticalScrollBarVisibility="Disabled">
