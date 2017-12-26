@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Optional;
+using Brush = System.Drawing.Brush;
 
 namespace _Sell.Action
 {
@@ -72,7 +73,7 @@ namespace _Sell.Action
             button.Content = textBlock;
             button.Click += (o, a) => action.HandleClick();
             button.Template = Application.Current.Resources["tplCubeButton"] as ControlTemplate;
-            button.Background = Brushes.Orange;
+            button.Background = new SolidColorBrush(Color.FromRgb(0xFF, 0xA0, 0x00));
             return button;
         }
 
