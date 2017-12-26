@@ -5,29 +5,21 @@ namespace _Sell.Action
 {
     public class GenericGridAction : IGridAction
     {
-        public const Key NoHotKey = Key.F24;
         private readonly System.Action _clickAction;
 
-        public GenericGridAction(System.Action clickAction, string mainText, string subText = "", Key hotKey = NoHotKey)
+        public GenericGridAction(System.Action clickAction, string mainText, string subText = "")
         {
             _clickAction = clickAction;
-            HotKey = hotKey;
             MainText = mainText;
             SubText = subText;
         }
 
-        public Key HotKey { get; private set; }
         public string MainText { get; private set; }
         public string SubText { get; private set; }
 
-        public void HandleClick(object sender, RoutedEventArgs args)
+        public void HandleClick()
         {
             _clickAction.Invoke();
-        }
-
-        public bool HasHotKey()
-        {
-            return HotKey != NoHotKey;
         }
     }
 }

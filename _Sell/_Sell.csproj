@@ -37,6 +37,9 @@
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb">
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Optional, Version=4.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Optional.4.0.0-rc\lib\net45\Optional.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -58,8 +61,13 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Action\GenericGridAction.cs" />
+    <Compile Include="Action\GridHotKeys.cs" />
+    <Compile Include="Action\GridMeta.cs" />
     <Compile Include="Action\IGridAction.cs" />
+    <Compile Include="Action\NextPageGridAction.cs" />
     <Compile Include="Action\ProductGridAction.cs" />
+    <Compile Include="Action\ProductGrid.cs" />
+    <Compile Include="Action\ProductGridPage.cs" />
     <Compile Include="Model\Price.cs" />
     <Compile Include="Model\Product.cs" />
     <Compile Include="Service\DefaultProductRegistry.cs" />
@@ -114,6 +122,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

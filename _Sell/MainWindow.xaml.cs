@@ -11,7 +11,6 @@ using _Hotkey;
 using _Sell.Action;
 using _Sell.Model;
 using _Sell.Service;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace _Sell
 {
@@ -42,25 +41,11 @@ namespace _Sell
         public int intTempSaved;
         public Price[] lastPrices = new Price[0];
         private IProductRegistry _productRegistry = new DefaultProductRegistry();
+        private ProductGrid _productGrid;
 
         private int[][] _firstPageProducts =
         {
             new[] {-3, -4, 1}, new[] {2, 3, 4}, new[] {5, 6, 7}, new[] {8, -2, 9}
-        };
-
-        private readonly Dictionary<int, Key> _productHotKeys = new Dictionary<int, Key>()
-        {
-            {-3, Key.Q},
-            {-4, Key.W},
-            {1, Key.E},
-            {2, Key.A},
-            {3, Key.S},
-            {4, Key.D},
-            {5, Key.Y},
-            {6, Key.X},
-            {7, Key.C},
-            {8, Key.R},
-            {9, Key.V}
         };
 
         public Price Cash
@@ -102,6 +87,7 @@ namespace _Sell
                 NmrBtns = new[]
                     {btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine};
                 initNmrBtns();
+                _productGrid = new ProductGrid(ProductGrid.DefaultGridMeta, ProductButtonsGrid);
                 initFirstPage();
                 clearProducts();
             }
@@ -114,69 +100,43 @@ namespace _Sell
 
         private void initFirstPage()
         {
-            IGridAction[][] firstPageActions = _firstPageProducts
-                .Select(arr => arr.Select(ProductIdToAction).ToArray())
-                .ToArray();
-            for (var i = 0; i < firstPageActions.Length; i++)
+            _productGrid.Add(new GenericGridAction(
+                () => btnSonstiges_Click(null, null),
+                "Sonstiges", "€ xx,xx"
+            ));
+            _productGrid.Add(new GenericGridAction(
+                () => btnSpende_Click(null, null),
+                "Spende", "€ xx,xx"
+            ));
+            foreach (var product in _productRegistry.Products)
             {
-                for (var j = 0; j < firstPageActions[i].Length; j++)
-                {
-                    var action = firstPageActions[i][j];
-                    var button = new Button();
-
-                    var textBlock = new TextBlock
-                    {
-                        Text = action.MainText + "\n\n"
-                    };
-                    textBlock.Inlines.Add(new TextBlock
-                    {
-                        Text = action.SubText,
-                        FontWeight = FontWeights.Bold
-                    });
-                    if (action.HasHotKey())
-                    {
-                        textBlock.Inlines.Add(new TextBlock
-                        {
-                            Text = "  " + action.HotKey,
-                            FontStyle = FontStyles.Italic
-                        });
-                        localKeyHandlers[action.HotKey] = _ => action.HandleClick(null, null);
-                    }
-                    button.Content = textBlock;
-                    button.Click += action.HandleClick;
-                    button.Template = Application.Current.Resources["tplCubeButton"] as ControlTemplate;
-                    button.Background = Brushes.Orange;
-                    Grid.SetRow(button, i);
-                    Grid.SetColumn(button, j);
-                    ProductButtonsGrid.Children.Add(button);
-                }
+                _productGrid.Add(new ProductGridAction(product, HandleProductButtonClick));
             }
         }
 
         private IGridAction ProductIdToAction(int productId)
         {
-            var hotKey = _productHotKeys.ContainsKey(productId) ? _productHotKeys[productId] : Key.F24;
             if (_productRegistry.HasProduct(productId))
             {
-                Product product = _productRegistry.GetProduct(productId);
-                return new ProductGridAction(product, HandleProductButtonClick, hotKey);
+                var product = _productRegistry.GetProduct(productId);
+                return new ProductGridAction(product, HandleProductButtonClick);
             }
             switch (productId)
             {
                 case -2:
                     return new GenericGridAction(
                         () => btnGetraenke_Click(null, null),
-                        "Öffnen", "", hotKey
+                        "Öffnen", ""
                     );
                 case -3:
                     return new GenericGridAction(
                         () => btnSonstiges_Click(null, null),
-                        "Sonstiges", "€ xx,xx", hotKey
+                        "Sonstiges", "€ xx,xx"
                     );
                 case -4:
                     return new GenericGridAction(
                         () => btnSpende_Click(null, null),
-                        "Spende", "€ xx,xx", hotKey
+                        "Spende", "€ xx,xx"
                     );
                 default:
                     return new GenericGridAction(() => { }, "");
@@ -516,7 +476,8 @@ namespace _Sell
             {
                 setStatus("Speichern...");
                 D.W("Speichere Rechnung...");
-                string nextRechungName = string.Format("rechnung_{0:0000}_{1:yyyyMMdd_HHmm}.txt", _SellInfo.rechnungsNummer, DateTime.Now);
+                string nextRechungName = string.Format("rechnung_{0:0000}_{1:yyyyMMdd_HHmm}.txt",
+                    _SellInfo.rechnungsNummer, DateTime.Now);
                 string path = Path.Combine(_SellInfo.RechnungenPath, nextRechungName);
                 D.W(path, "Speichere Rechung unter");
                 StreamWriter fs = File.CreateText(path);
@@ -808,6 +769,7 @@ namespace _Sell
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            _productGrid.HandleKeyPress(e.Key);
             if (localKeyHandlers.ContainsKey(e.Key))
             {
                 localKeyHandlers[e.Key](e);
