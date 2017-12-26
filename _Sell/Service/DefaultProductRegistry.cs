@@ -16,7 +16,7 @@ namespace _Sell.Service
             new Product(5, "Aufstrichbrot", new Price(1, 50)),
             new Product(6, "Softdrinks 0,5l", new Price(1, 50)),
             new Product(7, "Speckstangerl", new Price(2, 50)),
-            new Product(8, "Weißwein gespritzt", new Price(2, 50), "Weißwein\ngespritzt"),
+            new Product(8, "Autofahrerpunsch", new Price(3, 0), "Autofahrer-\npunsch"),
             new Product(9, "Glühwein", new Price(3, 50)),
             new Product(10, "Eierlikör", new Price(2, 50)),
             new Product(11, "Prosecco", new Price(3, 0)),
