@@ -5,6 +5,10 @@ works on Windows and doesn't exactly have good UX. Welll
 
 Don't use this I guess?
 
+Screenshot
+==========
+![Screenshot of the application main window](https://github.com/xxyy/_sell/raw/master/screenshot.png)
+
 Building
 ========
 Use either Visual Studio or JetBrains Rider, they should configure everything for you. No idea if there's proper
