@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
-using _Sell.Model;
+﻿using _Sell.Model;
+using System;
 
 namespace _Sell.Action
 {

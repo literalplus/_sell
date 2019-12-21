@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Optional;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Optional;
-using Brush = System.Drawing.Brush;
 
 namespace _Sell.Action
 {
@@ -15,8 +13,8 @@ namespace _Sell.Action
         //private IGridAction[][] _actions = {new IGridAction[3], new IGridAction[3], new IGridAction[3], new IGridAction[3]};
         private readonly GridMeta _meta;
 
-        private List<IGridAction> _actions = new List<IGridAction>();
-        private List<UIElement> _elements = new List<UIElement>();
+        private readonly List<IGridAction> _actions = new List<IGridAction>();
+        private readonly List<UIElement> _elements = new List<UIElement>();
 
         public ProductGridPage(GridMeta meta)
         {
@@ -80,7 +78,7 @@ namespace _Sell.Action
         public bool HandleKeyPress(Key key)
         {
             var indexForKey = _meta.HotKeys.IndexForKey(key);
-            indexForKey .MatchSome(index => _actions[index].HandleClick());
+            indexForKey.MatchSome(index => _actions[index].HandleClick());
             return indexForKey.HasValue;
         }
 
@@ -93,7 +91,7 @@ namespace _Sell.Action
         {
             return GetSpaceLeft() > 0;
         }
-        
+
         public void Add(IGridAction action)
         {
             if (!HasSpace())

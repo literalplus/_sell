@@ -1,4 +1,4 @@
-﻿<Window x:Class="_Sell.MainWindow"
+﻿<Window x:Name="_Sell_Main" x:Class="_Sell.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="_Sell" Height="350" Width="525" WindowState="Maximized" Loaded="Window_Loaded_1" WindowStyle="None"
@@ -117,43 +117,43 @@
                 </Button.ContextMenu>
                 ←
             </Button>
-            <Button Grid.Row="0" Grid.Column="1" Name="btnOne" Click="NmrBtns_Click"
+            <Button Grid.Row="0" Grid.Column="1" Name="btnOne" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 1
             </Button>
-            <Button Grid.Row="0" Grid.Column="2" Name="btnTwo" Click="NmrBtns_Click"
+            <Button Grid.Row="0" Grid.Column="2" Name="btnTwo" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 2
             </Button>
-            <Button Grid.Row="0" Grid.Column="3" Name="btnThree" Click="NmrBtns_Click"
+            <Button Grid.Row="0" Grid.Column="3" Name="btnThree" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 3
             </Button>
-            <Button Grid.Row="1" Grid.Column="1" Name="btnFour" Click="NmrBtns_Click"
+            <Button Grid.Row="1" Grid.Column="1" Name="btnFour" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 4
             </Button>
-            <Button Grid.Row="1" Grid.Column="2" Name="btnFive" Click="NmrBtns_Click"
+            <Button Grid.Row="1" Grid.Column="2" Name="btnFive" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 5
             </Button>
-            <Button Grid.Row="1" Grid.Column="3" Name="btnSix" Click="NmrBtns_Click"
+            <Button Grid.Row="1" Grid.Column="3" Name="btnSix" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 6
             </Button>
-            <Button Grid.Row="2" Grid.Column="1" Name="btnSeven" Click="NmrBtns_Click"
+            <Button Grid.Row="2" Grid.Column="1" Name="btnSeven" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 7
             </Button>
-            <Button Grid.Row="2" Grid.Column="2" Name="btnEight" Click="NmrBtns_Click"
+            <Button Grid.Row="2" Grid.Column="2" Name="btnEight" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 8
             </Button>
-            <Button Grid.Row="2" Grid.Column="3" Name="btnNine" Click="NmrBtns_Click"
+            <Button Grid.Row="2" Grid.Column="3" Name="btnNine" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 9
             </Button>
-            <Button Grid.Row="2" Grid.Column="0" Name="btnZero" Click="NmrBtns_Click"
+            <Button Grid.Row="2" Grid.Column="0" Name="btnZero" Click="NumberButton_Click"
                     Template="{StaticResource tplCubeButton}" Background="#c67100" FontSize="20">
                 0
             </Button>

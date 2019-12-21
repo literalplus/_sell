@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Optional;
+using Optional.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Optional;
-using Optional.Collections;
 
 namespace _Sell.Action
 {
@@ -23,7 +22,7 @@ namespace _Sell.Action
         public GridHotKeys(Key[] keys)
         {
             _keys = keys;
-            _keyIndices = _keys.Select((key, index) => new {key, index})
+            _keyIndices = _keys.Select((key, index) => new { key, index })
                 .ToDictionary(t => t.key, t => t.index);
         }
 

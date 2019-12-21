@@ -1,4 +1,8 @@
-﻿using System;
+﻿using _Hotkey;
+using _Sell.Action;
+using _Sell.Model;
+using _Sell.Service;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,10 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using xytools;
-using _Hotkey;
-using _Sell.Action;
-using _Sell.Model;
-using _Sell.Service;
 
 namespace _Sell
 {
@@ -22,22 +22,19 @@ namespace _Sell
     /// </summary>
     public partial class MainWindow
     {
-        //public event NumberReturnsFromOuterSpaceHandler OnNumberReturns;
         public bool isCashLoggingEnabled;
 
-        public bool areDrinksVisible;
         public event EnterButtonHandler OnEnterButton = () => { };
         public bool isMultiplicationWaiting;
-        public Button[] NmrBtns;
-        public Dictionary<Button, int> dctNmrBtns = new Dictionary<Button, int>();
         public Dictionary<string, int> productAmounts = new Dictionary<string, int>();
         public Dictionary<string, int> productIndexes = new Dictionary<string, int>();
         public List<KeyValuePair<string, int>> productsInOrder = new List<KeyValuePair<string, int>>();
         private Dictionary<Key, KeyEventHandler> localKeyHandlers = new Dictionary<Key, KeyEventHandler>();
         public int intTempSaved;
-        public Price[] lastPrices = new Price[0];
+        public Price[] lastPrices = Array.Empty<Price>();
         private IProductRegistry _productRegistry = new DefaultProductRegistry();
-        private ProductGrid _productGrid;
+        private readonly ProductGrid _productGrid;
+        private readonly NumberKeyManager NumberKeyManager = new NumberKeyManager();
 
         public Price Cash
         {
@@ -75,9 +72,7 @@ namespace _Sell
                 checkCashLogging();
                 total = new Price(0);
                 setStatus("Bereit!");
-                NmrBtns = new[]
-                    {btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine};
-                initNmrBtns();
+                NumberKeyManager.RegisterAll(btnZero, btnOne, btnTwo, btnThree, btnFour, btnFive, btnSix, btnSeven, btnEight, btnNine);
                 _productGrid = new ProductGrid(ProductGrid.DefaultGridMeta, ProductButtonsGrid);
                 initFirstPage();
                 clearProducts();
@@ -109,7 +104,6 @@ namespace _Sell
         {
             AddItemToLists(product.Name, product.Price);
             btnEnter.Focus();
-            areDrinksVisible = false;
         }
 
         public void checkCashLogging()
@@ -130,7 +124,7 @@ namespace _Sell
         {
             try
             {
-                Price[] tempPrices = {prc};
+                Price[] tempPrices = { prc };
                 lastPrices = lastPrices.Concat(tempPrices).ToArray();
                 D.W(xy_str.listArrayToString(lastPrices));
                 if (isCashLoggingEnabled)
@@ -150,7 +144,7 @@ namespace _Sell
             total = new Price(0);
             lbxItems.Items.Clear();
             lbxPrices.Items.Clear();
-            lbxItems.Items.Add(String.Format("{0,-40}| {1,-10}| {2,-10}", "Position", "EPreis", "Menge"));
+            lbxItems.Items.Add(string.Format("{0,-40}| {1,-10}| {2,-10}", "Position", "EPreis", "Menge"));
             lbxItems.Items.Add(("".PadLeft(110, '-')));
             lbxPrices.Items.Add("Preis");
             lbxPrices.Items.Add("".PadLeft(30, '-'));
@@ -169,12 +163,12 @@ namespace _Sell
                 totalAmount = intTempSaved;
             }
             productsInOrder.Add(new KeyValuePair<string, int>(Name, totalAmount));
-            modifyProduct(Name, price, totalAmount);
+            ModifyProduct(Name, price, totalAmount);
             if (addToTotal) addPriceToList(price);
             else addPriceToList(new Price(0));
         }
 
-        private void modifyProduct(string Name, Price singlePrice, int modifier)
+        private void ModifyProduct(string Name, Price singlePrice, int modifier)
         {
             bool newProduct = !productAmounts.ContainsKey(Name);
             if (newProduct && modifier < 0)
@@ -211,16 +205,6 @@ namespace _Sell
             {
                 lbxItems.Items[index] = itemString;
                 lbxPrices.Items[index] = priceString;
-            }
-        }
-
-        private void initNmrBtns()
-        {
-            int i = 0;
-            foreach (Button item in NmrBtns)
-            {
-                dctNmrBtns.Add(item, i);
-                i++;
             }
         }
 
@@ -358,14 +342,12 @@ namespace _Sell
         private void btnSpende_Click(object sender, RoutedEventArgs e)
         {
             OnEnterButton += GetItForSpenden;
-            areDrinksVisible = false;
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             clearProducts();
             setStatus("Alle Produkte entfernt!");
-            areDrinksVisible = false;
         }
 
         private void btnClearLast_Click(object sender, RoutedEventArgs e)
@@ -386,13 +368,13 @@ namespace _Sell
             if (lbICount <= 0) return;
             KeyValuePair<string, int> entry = productsInOrder[productsInOrder.Count - 1];
             productsInOrder.RemoveAt(productsInOrder.Count - 1);
-            modifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].RawValue / entry.Value),
+            ModifyProduct(entry.Key, new Price(lastPrices[lastPrices.Length - 1].RawValue / entry.Value),
                 -1 * entry.Value);
             if (lastPrices.Length >= 1)
             {
                 total = _total.Minus(lastPrices[lastPrices.Length - 1]);
                 Cash = _cash.Minus(lastPrices[lastPrices.Length - 1]);
-                if (lastPrices.Length == 1) lastPrices = new Price[] { };
+                if (lastPrices.Length == 1) lastPrices = Array.Empty<Price>();
                 else lastPrices = lastPrices.SubArray(0, lastPrices.Length - 1);
             }
             setStatus("Letztes Produkt entfernt!");
@@ -409,7 +391,7 @@ namespace _Sell
             {
                 setStatus("Speichern...");
                 D.W("Speichere Rechnung...");
-                string nextRechungName = string.Format("rechnung_{0:0000}_{1:yyyyMMdd_HHmm}.txt",
+                string nextRechungName = string.Format("rechnung_{0:0000}_{1:yyyy-MM-dd_HHmm}.txt",
                     _SellInfo.rechnungsNummer, DateTime.Now);
                 string path = Path.Combine(_SellInfo.RechnungenPath, nextRechungName);
                 D.W(path, "Speichere Rechung unter");
@@ -449,18 +431,9 @@ namespace _Sell
             tlz.Show();
         }
 
-        private void onNumKeyPress(RegisteredHotkey hotkey)
-        {
-            NmrBtns_Click(Win32.GetNumpadKeyId(hotkey.KeyCode), new RoutedEventArgs());
-        }
-
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
             HotkeyManager hotkeyManager = new HotkeyManager(this, "_Sell");
-            for (int i = 0; i <= 9; i++)
-            {
-                hotkeyManager.registerHotkey(Win32.GetNumpadKeyCode(i), Win32.MOD_NOREPEAT).onPress += onNumKeyPress;
-            }
             hotkeyManager.registerHotkey(Convert.ToUInt32('M'), Win32.MOD_NOREPEAT).onPress +=
                 h => btnSaveRechnung_Click(null, null); //Print Screen
             localKeyHandlers[Key.Return] = x => btnEnter_Click(null, null);
@@ -483,30 +456,35 @@ namespace _Sell
             }
         }
 
-        private void NmrBtns_Click(object sender, RoutedEventArgs e)
+        private void NumberButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                int number;
+                int number = -1;
                 if (sender is Button)
                 {
-                    dctNmrBtns.TryGetValue((Button) sender, out number);
+                    number = NumberKeyManager.GetValueOrNegativeOne((Button)sender);
                 }
                 else if (sender is int)
                 {
-                    number = (int) sender;
+                    number = (int)sender;
                 }
-                else
-                {
-                    return;
-                }
-                removeFirstZeroOnDisplay();
-                Display.AddToFirstLine(number);
+                HandleNumberEntryIfNonNegative(number);
             }
             catch (Exception)
             {
                 setStatus("Ein Fehler ist aufgetreten!");
             }
+        }
+
+        private void HandleNumberEntryIfNonNegative(int number)
+        {
+            if (number < 0)
+            {
+                return;
+            }
+            removeFirstZeroOnDisplay();
+            Display.AddToFirstLine(number);
         }
 
         private void btnBackspace_Click(object sender, RoutedEventArgs e)
@@ -639,6 +617,14 @@ namespace _Sell
                 localKeyHandlers[e.Key](e);
                 e.Handled = true;
             }
+            int numberKeyValue = NumberKeyManager.GetValueOrNegativeOne(e.Key);
+            HandleNumberEntryIfNonNegative(numberKeyValue);
+        }
+
+        private bool IsNumberKey(Key key)
+        {
+            return (key >= Key.D0 && key <= Key.D9) ||
+                (key >= Key.NumPad0 && key <= Key.NumPad9);
         }
 
         private void FirstPageButton_OnClick(object sender, RoutedEventArgs e)

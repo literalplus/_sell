@@ -1,7 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Input;
-
-namespace _Sell.Action
+﻿namespace _Sell.Action
 {
     public interface IGridAction
     {

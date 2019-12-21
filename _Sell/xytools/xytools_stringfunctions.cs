@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace xytools
 {
     static class xy_str
     {
-        public static string Reverse(string input){
-            string output="";
+        public static string Reverse(string input)
+        {
+            string output = "";
             int i = 1;
-            while(i <= input.Length){
-                output += input[input.Length-i];
+            while (i <= input.Length)
+            {
+                output += input[input.Length - i];
                 i++;
             }
             return output;
@@ -29,9 +29,9 @@ namespace xytools
             if (str == "") throw new ArgumentException("xytools.xy_str.explode(str,sep): str must not be empty");
             //if (seperator == null) throw new ArgumentNullException("xytools.xy_str.explode(str,sep): sep must not be null!");
             if (str == null) throw new ArgumentNullException("xytools.xy_str.explode(str,sep): str must not be null");
-            string[] output=new string[xy_str.countCharOccurences(str,seperator)];
-            string TempString="";
-            byte i=0;
+            string[] output = new string[xy_str.countCharOccurences(str, seperator)];
+            string TempString = "";
+            byte i = 0;
             foreach (char letter in str)
             {
                 if (letter == seperator)
@@ -49,7 +49,7 @@ namespace xytools
         }
         public static int countCharOccurences(string str, char sep = ',')
         {
-            int output=0;
+            int output = 0;
             foreach (char item in str)
             {
                 if (item == sep) output++;
@@ -62,7 +62,7 @@ namespace xytools
         /// <param name="arr">Array to convert</param>
         /// <param name="sep">Custom seperator (optional)</param>
         /// <returns>Output String</returns>
-        public static string implode(string[] arr,char sep=',')
+        public static string implode(string[] arr, char sep = ',')
         {
             string output = "";
             foreach (string item in arr)
@@ -82,10 +82,10 @@ namespace xytools
         /// <param name="howManyTabs">how many tabs to add in front of items</param>
         /// <param name="arr">source array</param>
         /// <returns>arr as string</returns>
-        public static string listArrayToString(Array arr, ushort howManyTabs=1)
+        public static string listArrayToString(Array arr, ushort howManyTabs = 1)
         {
             string tabz = xy_str.Multiply("   ", howManyTabs);
-            D.W("###xy_str.listArrayToString(): Lenght="+arr.Length);
+            D.W("###xy_str.listArrayToString(): Lenght=" + arr.Length);
             try
             {
                 string output = arr.GetType().ToString() + "{\n";
@@ -115,7 +115,7 @@ namespace xytools
                             }
                             catch (NullReferenceException)
                             {
-                                output += tabz +  j + " => null/static, \n";
+                                output += tabz + j + " => null/static, \n";
                             }
                         }
                         j++;

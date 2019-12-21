@@ -21,10 +21,6 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/>.
 \\*************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
 
 namespace xytools
@@ -37,14 +33,15 @@ namespace xytools
     }
     public static class D
     {
-        public static void W(string msg,CodeArea ca = CodeArea.None){
+        public static void W(string msg, CodeArea ca = CodeArea.None)
+        {
             if (!IsCodeAreaDebugEnabled(ca)) return;
             Debug.WriteLine(msg);
         }
         public static void W(string msg, string add, CodeArea ca = CodeArea.None)
         {
             if (!IsCodeAreaDebugEnabled(ca)) return;
-            Debug.WriteLine(msg,add);
+            Debug.WriteLine(msg, add);
         }
         public static void W(object msg, CodeArea ca = CodeArea.None)
         {

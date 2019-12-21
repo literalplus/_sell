@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using xytools;
 
 namespace _Sell
@@ -21,12 +15,12 @@ namespace _Sell
         {
             D.W("***************************************");
             D.W("_Sell v" + _SellInfo.VersionString);
-            D.W("by xxyy - http://l1t.li/");
+            D.W("https://github.com/literalplus/_Sell");
             D.W("***************************************");
             _SellInfo.MainPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @".xxyy\_sell");
             D.W(_SellInfo.MainPath, "Setting MainPath to");
             _SellInfo.RechnungenPath = Path.Combine(_SellInfo.MainPath, @"rechnungen\");
-            _SellInfo.rechnungsNummerConfig=Path.Combine(_SellInfo.MainPath,"rechnungen.int.cfg.txt");
+            _SellInfo.rechnungsNummerConfig = Path.Combine(_SellInfo.MainPath, "rechnungen.int.cfg.txt");
             _SellInfo.cashConfig = Path.Combine(_SellInfo.MainPath, "cash.int.cfg.txt");
             D.W(_SellInfo.RechnungenPath, "Setting RechnungsPath to");
             try
@@ -107,7 +101,7 @@ namespace _Sell
     {
         public static MainWindow MainWindow;
 
-        public const string VersionString="0.0.1a";
+        public const string VersionString = "0.0.1a";
         public static string MainPath;
         public static string RechnungenPath;
         public static string rechnungsNummerConfig;
@@ -117,7 +111,8 @@ namespace _Sell
         public static int cashStand
         {
             get { return _SellInfo._cashStand; }
-            set {
+            set
+            {
                 try
                 {
                     if (value == _SellInfo._cashStand) return;

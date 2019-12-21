@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -10,8 +7,9 @@ using System.Windows.Media;
 namespace xytools
 {
 
-    public static class AeroTools{
-        public static void RefreshAero(Window Win,int right=-1,int bottom=-1)
+    public static class AeroTools
+    {
+        public static void RefreshAero(Window Win, int right = -1, int bottom = -1)
         {
             try
             {
@@ -32,8 +30,8 @@ namespace xytools
                 // Note that the default desktop Dpi is 96dpi. The  margins are
                 // adjusted for the system Dpi.
 
-                if(bottom == -1) bottom = ((int)Win.ActualHeight) + 12;
-                if(right == -1) right = ((int)Win.ActualWidth) + 12;
+                if (bottom == -1) bottom = ((int)Win.ActualHeight) + 12;
+                if (right == -1) right = ((int)Win.ActualWidth) + 12;
 
                 int cxLeftWidth = Convert.ToInt32(2 * (DesktopDpiX / 96));
                 int cxRightWidth = Convert.ToInt32(right * (DesktopDpiX / 96));

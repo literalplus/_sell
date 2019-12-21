@@ -1,11 +1,7 @@
-﻿using System;
+﻿using Optional.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
-using Optional;
-using Optional.Collections;
 
 namespace _Sell.Action
 {
