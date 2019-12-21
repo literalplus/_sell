@@ -1,5 +1,4 @@
-﻿using _Hotkey;
-using _Sell.Action;
+﻿using _Sell.Action;
 using _Sell.Model;
 using _Sell.Service;
 using System;
@@ -433,13 +432,11 @@ namespace _Sell
 
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
-            HotkeyManager hotkeyManager = new HotkeyManager(this, "_Sell");
-            hotkeyManager.registerHotkey(Convert.ToUInt32('M'), Win32.MOD_NOREPEAT).onPress +=
-                h => btnSaveRechnung_Click(null, null); //Print Screen
             localKeyHandlers[Key.Return] = x => btnEnter_Click(null, null);
             localKeyHandlers[Key.Back] = x => btnBackspace_Click(null, null);
             localKeyHandlers[Key.Delete] = x => btnClearLast_Click(null, null);
             localKeyHandlers[Key.OemPeriod] = x => btnSaveRechnung_Click(null, null);
+            localKeyHandlers[Key.PrintScreen] = x => btnSaveRechnung_Click(null, null);
             localKeyHandlers[Key.Multiply] = h => btnTimes_Click(null, null);
             localKeyHandlers[Key.Add] = h => btnAdd_Click(null, null);
             localKeyHandlers[Key.Subtract] = h => btnSubtract_Click(null, null);

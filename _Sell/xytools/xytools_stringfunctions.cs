@@ -5,69 +5,12 @@ namespace xytools
 {
     static class xy_str
     {
-        public static string Reverse(string input)
-        {
-            string output = "";
-            int i = 1;
-            while (i <= input.Length)
-            {
-                output += input[input.Length - i];
-                i++;
-            }
-            return output;
-        }
-        /// <summary>
-        /// explodes string[] from string. Optionally, a custom seperator can be chosen.
-        /// </summary>
-        /// <param name="str">The string to explode</param>
-        /// <param name="seperator">Custom Seperator(optional), default ','</param>
-        /// <returns>string[] with exploded strings form str</returns>
-        /// <exception cref="System.ArgumentException" />
-        /// <exception cref="System.ArgumentNullException" />
-        public static string[] explode(string str, char seperator = ',')
-        {
-            if (str == "") throw new ArgumentException("xytools.xy_str.explode(str,sep): str must not be empty");
-            //if (seperator == null) throw new ArgumentNullException("xytools.xy_str.explode(str,sep): sep must not be null!");
-            if (str == null) throw new ArgumentNullException("xytools.xy_str.explode(str,sep): str must not be null");
-            string[] output = new string[xy_str.countCharOccurences(str, seperator)];
-            string TempString = "";
-            byte i = 0;
-            foreach (char letter in str)
-            {
-                if (letter == seperator)
-                {
-                    output[i] = TempString;
-                    i++;
-                    TempString = "";
-                }
-                else
-                {
-                    TempString += letter;
-                }
-            }
-            return output;
-        }
         public static int countCharOccurences(string str, char sep = ',')
         {
             int output = 0;
             foreach (char item in str)
             {
                 if (item == sep) output++;
-            }
-            return output;
-        }
-        /// <summary>
-        /// Converts String-Array to String with sep between items.
-        /// </summary>
-        /// <param name="arr">Array to convert</param>
-        /// <param name="sep">Custom seperator (optional)</param>
-        /// <returns>Output String</returns>
-        public static string implode(string[] arr, char sep = ',')
-        {
-            string output = "";
-            foreach (string item in arr)
-            {
-                output += item + sep;
             }
             return output;
         }
