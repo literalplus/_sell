@@ -7,7 +7,7 @@ namespace _Sell
 {
     class NumberKeyManager
     {
-        private readonly Dictionary<Button, int> ButtonValues = new Dictionary<Button, int>();
+        private readonly Dictionary<Button, int> _buttonValues = new Dictionary<Button, int>();
 
         public void RegisterAll(params Button[] buttons)
         {
@@ -15,21 +15,21 @@ namespace _Sell
             {
                 throw new ArgumentException("need exactly 10 buttons");
             }
-            for (int i = 0; i < buttons.Length; i++)
+            for (var i = 0; i < buttons.Length; i++)
             {
-                ButtonValues.Add(buttons[i], i);
+                _buttonValues.Add(buttons[i], i);
             }
         }
 
         public int GetValueOrNegativeOne(Button source)
         {
-            if (!ButtonValues.ContainsKey(source))
+            if (!_buttonValues.ContainsKey(source))
             {
                 return -1;
             }
             else
             {
-                return ButtonValues[source];
+                return _buttonValues[source];
             }
         }
 

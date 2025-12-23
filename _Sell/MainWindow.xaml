@@ -99,7 +99,7 @@
                     <ContextMenu>
                         <MenuItem Header="Minimieren" Click="MenuItem_Click_2" />
                         <MenuItem Header="Schließen" Click="MenuItem_Click_3" />
-                        <MenuItem Header="Tools..." Click="onToolButtonClick" />
+                        <MenuItem Header="Tools..." Click="OnToolButtonClick" />
                         <MenuItem Name="miSetCash" Header="Kasse setzen zu... (eintippen + ENTER)"
                                   Click="MenuItem_Click_4" IsEnabled="False" />
                         <MenuItem Name="miSubtractCash" Header="Aus Kasse entfernen... (eintippen + ENTER)"

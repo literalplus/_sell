@@ -5,7 +5,7 @@ namespace _Sell
     /// <summary>
     /// Interaktionslogik für Tools.xaml
     /// </summary>
-    public partial class Tools : Window
+    public partial class Tools
     {
         public Tools()
         {
@@ -14,13 +14,22 @@ namespace _Sell
 
         private void btnRechnungsFolder_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(_SellInfo.RechnungenPath);
-
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = SellInfo.RechnungenPath,
+                UseShellExecute = true
+            });
         }
 
         private void btnMainDir_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(_SellInfo.MainPath);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = SellInfo.MainPath,
+                UseShellExecute = true
+            });
         }
     }
 }

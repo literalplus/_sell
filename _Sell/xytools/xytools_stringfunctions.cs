@@ -3,18 +3,8 @@ using System.Text;
 
 namespace xytools
 {
-    static class xy_str
+    static class XyStr
     {
-        public static int countCharOccurences(string str, char sep = ',')
-        {
-            int output = 0;
-            foreach (char item in str)
-            {
-                if (item == sep) output++;
-            }
-            return output;
-        }
-
         /// <summary>
         /// returns an array as a string. i.e.
         /// string[]{
@@ -25,16 +15,16 @@ namespace xytools
         /// <param name="howManyTabs">how many tabs to add in front of items</param>
         /// <param name="arr">source array</param>
         /// <returns>arr as string</returns>
-        public static string listArrayToString(Array arr, ushort howManyTabs = 1)
+        public static string ListArrayToString(Array arr, ushort howManyTabs = 1)
         {
-            string tabz = xy_str.Multiply("   ", howManyTabs);
+            var tabz = XyStr.Multiply("   ", howManyTabs);
             D.W("###xy_str.listArrayToString(): Lenght=" + arr.Length);
             try
             {
-                string output = arr.GetType().ToString() + "{\n";
+                var output = arr.GetType().ToString() + "{\n";
                 if (arr is string[])
                 {
-                    int i = 0;
+                    var i = 0;
                     foreach (string item in arr)
                     {
                         output += tabz + i + " => '" + item + "', \n";
@@ -43,12 +33,12 @@ namespace xytools
                 }
                 else
                 {
-                    int j = 0;
-                    foreach (object item in arr)
+                    var j = 0;
+                    foreach (var item in arr)
                     {
-                        if (item is Array)
+                        if (item is Array array)
                         {
-                            output += tabz + j + " => Array: \n" + xy_str.listArrayToString((Array)item) + ", \n";
+                            output += tabz + j + " => Array: \n" + XyStr.ListArrayToString(array) + ", \n";
                         }
                         else
                         {
@@ -82,8 +72,8 @@ namespace xytools
         /// <returns>output</returns>
         public static string Multiply(string str, int times)
         {
-            int i = 0;
-            StringBuilder sb = new StringBuilder();
+            var i = 0;
+            var sb = new StringBuilder();
             while (i < times)
             {
                 sb.Append(str);
@@ -95,7 +85,7 @@ namespace xytools
         //http://stackoverflow.com/a/943650/1117552
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
-            T[] result = new T[length];
+            var result = new T[length];
             Array.Copy(data, index, result, 0, length);
             return result;
         }

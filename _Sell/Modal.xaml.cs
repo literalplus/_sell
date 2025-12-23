@@ -7,39 +7,40 @@ namespace _Sell
     /// </summary>
     public partial class Modal : Window
     {
-        private bool isOK = false;
-        public Modal(string Text)
+        private bool _isOk = false;
+        public Modal(string text)
         {
             InitializeComponent();
-            tbloCaption.Text = Text;
+            tbloCaption.Text = text;
         }
-        public Modal(string Text, string Title)
+        public Modal(string text, string title)
         {
             InitializeComponent();
-            tbloCaption.Text = Text;
-            this.Title = Title;
-        }
-        public ModalReturn ShowAndGet()
-        {
-            this.ShowDialog();
-            return new ModalReturn(txtInput.Text, this.isOK);
+            tbloCaption.Text = text;
+            this.Title = title;
         }
 
-        public static ModalReturn staticShow(string text, string Title = "Frage")
+        private ModalReturn ShowAndGet()
         {
-            Modal tempMdl = new Modal(text, Title);
+            this.ShowDialog();
+            return new ModalReturn(txtInput.Text, this._isOk);
+        }
+
+        public static ModalReturn StaticShow(string text, string title = "Frage")
+        {
+            var tempMdl = new Modal(text, title);
             return tempMdl.ShowAndGet();
         }
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            this.isOK = true;
+            this._isOk = true;
             this.Close();
         }
 
         private void btnAbort_Click(object sender, RoutedEventArgs e)
         {
-            this.isOK = false;
+            this._isOk = false;
             this.Close();
         }
     }
@@ -48,11 +49,11 @@ namespace _Sell
     {
         public string Input;
         //public MessageBoxResult Status;
-        public bool isOK;
-        public ModalReturn(string Input, bool isOK)
+        public bool IsOk;
+        public ModalReturn(string input, bool isOk)
         {
-            this.Input = Input;
-            this.isOK = isOK;
+            this.Input = input;
+            this.IsOk = isOk;
         }
     }
 }
