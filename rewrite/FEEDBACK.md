@@ -1,5 +1,7 @@
 # Rewrite guide review and follow-up decisions
 
+> Review history only. Decisions have been consolidated into `REQUIREMENTS.md`, `UI.md`, `DATA.md`, and `DECISION_LOG.md`; follow those documents if wording differs. The missing-email behavior is resolved in `DECISION_LOG.md`.
+
 ## Overall assessment
 
 The rewrite folder is a strong, largely self-contained implementation brief. Its core scope is consistent, the catalog snapshot removes the need to inspect the legacy repository, and the acceptance criteria give an implementing agent useful observable outcomes. Legacy defects are generally distinguished clearly from intended behavior.
@@ -21,7 +23,7 @@ This review covered all six original files in this folder. No legacy source insp
 - Removing a line, reducing its quantity, or discarding a cart must reverse the corresponding sale/donation effects exactly, even after manual drawer adjustments.
 - Keep the displayed balance and ledger's recorded deltas/results consistent.
 
-**Affected sections:** `REQUIREMENTS.md` “Build and edit a sale,” “Cash drawer,” and acceptance criteria; `UI.md` “Cash drawer and audit”; `DATA.md` “Cash drawer and audit ledger”; `OPEN_QUESTIONS.md` decision 5.
+**Affected sections:** `REQUIREMENTS.md` “Build and edit a sale,” “Cash drawer,” and acceptance criteria; `UI.md` “Cash drawer and audit”; `DATA.md` “Cash drawer and audit ledger”; `DECISION_LOG.md` decision 5.
 
 ## 2. Persist and recover the active cart
 
@@ -38,7 +40,7 @@ This review covered all six original files in this folder. No legacy source insp
 - Saving must transfer the cart into the pending/saved lifecycle without leaving it available for accidental resubmission as a new sale. Discarding must reverse its effects and clear the persisted active cart.
 - This change does not by itself require offline app loading, PWA precaching, or offline page-refresh support. Recovery can occur when the app next loads online.
 
-**Affected sections:** `README.md` scope; `REQUIREMENTS.md` acceptance criterion 9; `UI.md` offline behavior and accessibility/state; `DATA.md` “Active cart” and persistence boundaries; `OPEN_QUESTIONS.md` decision 3.
+**Affected sections:** `README.md` scope; `REQUIREMENTS.md` acceptance criterion 9; `UI.md` offline behavior and accessibility/state; `DATA.md` “Active cart” and persistence boundaries; `DECISION_LOG.md` decision 3.
 
 ## 3. Identity for uploaded invoices
 
@@ -53,7 +55,7 @@ This review covered all six original files in this folder. No legacy source insp
 - Browser-local ledger events can continue using the identity captured when the local event occurred, including during offline token expiry. Distinguish this local audit attribution from server-side invoice attribution.
 - State what happens if the validated token has no usable `email` claim; that small authentication-contract detail remains unspecified.
 
-**Affected sections:** `REQUIREMENTS.md` authentication/offline acceptance criteria; `DATA.md` invoice fields and OIDC paragraph; `OPEN_QUESTIONS.md` identity guidance.
+**Affected sections:** `REQUIREMENTS.md` authentication/offline acceptance criteria; `DATA.md` invoice fields and OIDC paragraph; `DECISION_LOG.md` identity guidance.
 
 ## 4. Server invoice IDs and client-side deduplication
 
@@ -148,7 +150,7 @@ Provide one ordinary-sale example and one donation-only example. The implementin
 
 ### Reconcile the documents
 
-`OPEN_QUESTIONS.md` currently says no decisions block implementation. Record the decisions above there, propagate them into requirements/UI/data, and retain only genuinely unresolved details as questions. In particular, remove the superseded requirements for zero clamping, memory-only carts, and client-generated invoice primary keys.
+The review's decisions have been recorded in requirements/UI/data and `DECISION_LOG.md`. Remove superseded requirements for zero clamping, memory-only carts, and client-generated invoice primary keys.
 
 Add a short precedence rule: explicit rewrite decisions override legacy observations; acceptance criteria govern required behavior; proposed UI/model details allow implementation latitude unless explicitly required.
 
@@ -171,4 +173,4 @@ Explicitly delegate ordinary engineering choices such as libraries, API route na
 
 ## Readiness conclusion
 
-The folder already communicates the intended application well and provides enough catalog information to implement it independently of the legacy source. After the decisions in this feedback are incorporated and the remaining small contract details are settled, it should be a substantially more reliable brief for an autonomous implementing agent.
+The folder communicates the intended application and provides enough catalog information to implement it independently of the legacy source. The decisions in this review, including the missing-email resolution, are consolidated in the current specification for the implementing agent.
