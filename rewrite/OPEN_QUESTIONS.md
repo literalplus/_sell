@@ -1,47 +1,67 @@
-# Open questions and implementation decisions
+# Decisions recorded and remaining questions
 
-Resolve the first four before finalizing persistence and sale semantics. The remaining questions depend on whether the corresponding legacy feature is retained.
+## Decisions recorded
 
-1. **Persistence and PostgreSQL role:** Should saved invoices be durable in PostgreSQL? If not, what data is PostgreSQL expected to own, given that product configuration is requested as browser-local? Should invoice persistence be mandatory or optional in the product?
+1. **Persistence and PostgreSQL:** Products are stored and edited in PostgreSQL. Informational invoices are saved in PostgreSQL using a compact record (primary key, timestamp, total cents, JSONB invoice data). The browser caches product configuration for offline checkout and queues invoices locally for later upload.
+2. **Donation:** A donation is an informational line in the cart/saved invoice data, is excluded from invoice total, and increases the cash-drawer balance.
+3. **Invoice purpose:** Invoices are for information/analysis only. No VAT/tax fields, statutory invoicing rules, or sequential human numbering are needed.
+4. **Migration/seed:** Do not migrate legacy receipts, invoice sequence, or cash config. Seed PostgreSQL with the 13 current product entries from `_Sell/Service/DefaultProductRegistry.cs`; the source is current and the screenshot is outdated. Keep `Sonstiges` and `Spende`.
+5. **Offline scope:** After the page and product configuration have loaded online, checkout should continue offline and invoices should queue locally for later upload. Product editing needs the server. First-visit offline loading/PWA-style precaching is future scope and must not be implemented now.
+6. **Cash ledger:** Cash tracking is required. Allow setting the balance at any time. Keep a local-storage audit ledger and provide a small view to inspect it. Coupling cash adjustments to sale-line additions is acceptable.
+7. **Payments:** Payments are cash. The app does not process/record payments; retain a change calculation. Choosing received denominations is future scope.
+8. **Custom items:** Keep the fixed description `Sonstiger Artikel`; differently priced entries remain separate lines.
+9. **Authentication:** Deploy in Kubernetes behind Authentik access control. The app also uses OIDC, with token handling in the frontend. No in-app roles or backend sessions. The app needs the current user's email for audit records.
 
-A: yes saved invoices can be stored in postgres (keep it simple e.g. a table of pk, timestamptz, total in cents, a jsonb data column that contains free json incl. a representation of the "invoice"). the products themselves however should actually be maintained in postgres via the settings screen. the suggested denormalisation already protects against product changes affecting invoices.
+## Remaining questions
 
-2. **Donation semantics:** Should `Spende` contribute its entered amount to the sale total and cash balance, or is it intentionally informational/non-chargeable? Current code displays the amount as a line but adds zero to total and cash.
+1. **Number of operators/terminals:** Can different Authentik users or devices use the app, including concurrently, or is it one operator/terminal at a time? PostgreSQL products/invoices are shared, but the cash balance and audit ledger are browser-local and there is no live sync. Multiple terminals would therefore have separate local drawer balances.
 
-A: intention of this feature is to improve accuracy of the cash drawer tracking for large donations i.e. it should not be added to the invoice total but should affect the cash drawer.
+A: only one concurrent user. products are global and only fetched on page load, cash balance and cash ledger remain local. concurrent use is not a relevant concern.
 
-1. **Invoice rules:** Are saved invoices required? Should they be downloadable/printable, and must they have sequential numbers or only unique identifiers? Are these receipts informal records, or must they meet local legal/fiscal requirements (VAT fields, immutable numbering, retention, correction/refund process)? No such requirements are implemented today.
+2. **Cash effects of an unfinished sale:** Cash balance changes occur when sale lines/donations are added, as approved. Proposed behavior is to append compensating ledger entries when an item is removed, and when an unsaved cart is cleared; after an invoice is saved or queued offline, its cash changes remain. Confirm whether clearing an unsaved cart should reverse its sale/donation entries.
 
-A: no, these are solely for information / interest / analysis. no VAT or similar is needed since this is designed for nonprofits that are exempt from taxation and invoicing requirements.
+A: correct; maybe we should relabel the save vs. clear-all buttons to e.g. "Speichern" and "Verwerfen"
 
-2. **Data migration:** Are existing `%AppData%` receipt text files, invoice number state, or cash-balance value present and required on the target installation? If no real legacy installation data is needed, seed a reviewed catalog and start fresh.
+3. **Offline page reload and draft recovery:** The spec caches the fetched catalog and pending invoices in browser storage. Is checkout expected to keep working after refreshing/reopening the browser while offline, or only while the already-loaded page remains open? If a browser closes unexpectedly with an unsaved cart, should it restore that draft? This matters because sale additions already affect the local cash ledger. First-visit offline loading remains out of scope.
 
-A: no migration; the product catalog can be seeded with the current values at db-init but that's it.
+A: support for refresh while offline is not necessary in the first iteration. if we add this then we will do it properly, later.
 
-3. **Terminal/offline model:** Is this one browser profile on one device, with network required only to save invoices, or must sales/configuration continue during network/server outages? Browser-local config does not automatically follow the operator to another device.
+4. **OIDC/API contract:** Which Authentik issuer URL, frontend client ID/redirect URLs, audience, and scopes should be used? Proposed flow is frontend OIDC authorization code with PKCE, with the frontend sending a bearer access token and the Rust API validating it (no backend session) and deriving the email from a trusted claim. Confirm the flow, email claim name, and that the claim is present on API tokens.
 
-A: the product config is on the server. after initial loading, the app should in principle function offline. e.g. invoice saving can be implemented via a queue/cache in local storage and if the server is offline it can be uploaded later. product editing is obviously not available if offline. a PWA-like offline support s.t. the page can be loaded locally without the initial connection to fetch config is a future plan but should not be implemented yet.
+A: OIDC URLs etc are configuration set at runtime. Flow is correct. 
 
-4. **Cash tracking:** Should the optional drawer balance/set/subtract behavior be retained? Is an opening balance or an audit history required? In the old app the fresh-install controls cannot be enabled through the visible UI, and drawer updates are coupled to sale-line additions rather than an explicit payment.
+example token:
+{
+    "iss": "https://auth.nowak.cloud/application/o/sell-guy/",
+    "sub": "lit",
+    "aud": "LfKXVdKWYzPVwT9HiKrr2hgghgUMcjDTpLEjnw1m",
+    "exp": 1793832649,
+    "iat": 1793830849,
+    "auth_time": 1793830849,
+    "acr": "goauthentik.io/providers/oauth2/default",
+    "jti": "Q3EzUU8lv9zkc5u3vHHrY2UDFLDVzv1PmnmmR1ZD",
+    "email": "aa@example.com",
+    "email_verified": false,
+    "name": "Full name",
+    "preferred_username": "lit"
+}
 
-A: an audit ledger for audit in local storage is a good addition, we can add a small view to access it. the cash drawer is a required feature and it's allowed to set the balance at any time. coupling the updates to the sale-line additions is fine for my purposes.
+1. **Initial cash balance:** Legacy data will not be migrated. Should a fresh installation start at €0, requiring the operator to set the actual opening balance, or should setup require an opening-balance entry before checkout?
 
-5. **Payment/tender:** Is `GGB` change calculation sufficient, or is any payment recording/payment-terminal integration intended? The inspected application processes no payments.
+A: zero is fine, no such requirement
 
-A: this is correct, all payments happen in cash. a nicer view that allows the user to select received money directly as banknotes/coins could be added in the future, but not yet.
+2. **Cash balance bounds:** Legacy manual subtraction can produce a negative balance. Preserve that behavior, or reject/clamp adjustments that would make the tracked balance negative?
 
-6. **Catalog seed:** Confirm whether the 13 products/prices in `_Sell/Service/DefaultProductRegistry.cs` are still correct. They differ from the historic screenshot. Should `Sonstiges` and `Spende` remain special checkout actions?
+A: clamp to zero
 
-A: the code is current, the screenshot is outdated. the special entries shall remain.
+3. **Invoice history/analysis:** The UI proposal includes a simple stored-invoice list/detail view. Is that useful, or is PostgreSQL storage alone sufficient? Are CSV export or summary reports required for analysis, or should these stay out of scope?
 
-7.  **Custom item behavior:** Should custom entries have an editable description (legacy always calls them `Sonstiger Artikel`)? Should same-description items at different prices remain separate lines? Proposed behavior is to keep amounts correct and lines unambiguous.
+A: only store no view; no reports or similar.
 
-A: keep it simple, this is an exit hatch rather than a feature we need often. description remains fixed. multiple copies with differing per-item amounts should remain separate.
+4. **Quantity validation:** The legacy allows zero/negative quantities through arithmetic paths. The rewrite proposes positive whole-number quantities only. Confirm that zero and negative quantities should be rejected.
 
-8.  **Deployment/security:** Where will the Rust/PostgreSQL service run (local machine, private network, or hosted server), and is any authentication needed even for a single operator? This affects how a browser can reach the API and how invoice data is protected. No user roles or authentication exist in the legacy app.
+A: yes
 
-A: this will be deployed in a k8s cluster behind a login page (poor person's WAF) with Authentik (this happens at the network level and the application is unaware). the app itself uses OIDC to connect to an Authentik instance, with the token handling in the frontend (no backend sessions needed). there are no roles, but i will configure authentik to limit access to the whole application on WAF level -> no RBAC needed in the app itself. the app should be aware of the current user's email address (we don't care about email changes) for auditing purposes.
+## Confirmed exclusions
 
-## Confirmed non-requirements unless scope changes
-
-No evidence supports multiple users/roles, live synchronization, inventory, customer records, card processing, external services, POS hardware, or a receipt printer. Add any of these only following an explicit decision.
+No inventory, customer records, card/payment-terminal integration, receipt printer, or cash denomination selection is required. Do not add in-app RBAC or live synchronization unless the scope is changed.

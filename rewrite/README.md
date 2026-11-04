@@ -11,9 +11,9 @@ This folder captures the behavior of the existing `_Sell` Windows/WPF point-of-s
 
 ## Purpose and scope
 
-The confirmed application is a small single-operator till for selecting configured items, totaling an in-progress sale, optionally tracking a cash-drawer balance, and saving a plain-text receipt. There is no customer/account workflow, inventory, tax calculation, card processing, or multi-user collaboration in the inspected code.
+The confirmed application is a small till for selecting configured items, totaling an in-progress sale, tracking a cash-drawer balance, and saving a plain-text receipt. The rewrite is for nonprofit use: no VAT/tax or formal invoicing rules are required. There is no customer/account workflow, inventory, card processing, or POS hardware integration in the inspected code.
 
-The rewrite should preserve the quick sale-entry use case while adapting it for browser use. The desired stack is Rust backend, React frontend, and PostgreSQL. Product configuration is expected to persist in the browser; persistence of completed invoices is still a decision. Keep the application single-user and without live synchronization unless the owner decides otherwise.
+The rewrite should preserve quick sale entry while adapting it for browser use. Use a Rust backend, React frontend, and PostgreSQL. Products are managed in PostgreSQL through a settings screen and seeded from the current code catalog at database initialization. Completed informational invoices are saved to PostgreSQL; if disconnected after app/configuration load, the app queues invoices locally and uploads them when connectivity returns. Cash drawer state and its audit ledger are local to the browser. Authentik provides OIDC authentication; the frontend handles tokens, and the app uses the current user's email for audit records. There are no in-app roles or live synchronization. The app is expected to work offline after initial load, but loading the app offline before an initial connection (PWA-style precaching) is explicitly deferred. Whether multiple operators/terminals can use it remains open; see [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
 ## Evidence labels
 

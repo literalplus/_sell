@@ -8,34 +8,34 @@ The legacy implementation has only `Product` and `Price` as explicit model class
 
 - `Product`: stable ID, name, optional display label, price in integer minor units, display/order position, enabled flag.
 - Currency is currently EUR. Keep price as integer cents. A product tile displays the optional display label when present and otherwise the name.
-- Persist product configuration in browser storage as requested. IndexedDB is suitable if an exportable/versioned configuration model is desired; localStorage is adequate for a tiny catalog. Keep a schema/version field so a future config update can migrate safely.
+- Store the authoritative catalog in PostgreSQL and manage it through the settings UI. Seed it from the 13 current entries in `_Sell/Service/DefaultProductRegistry.cs` during database initialization. The browser may cache the fetched catalog to support checkout after connectivity is lost; cache is not authoritative. Product editing requires the server.
 
 ### Active cart
 
 - `CartLine`: product ID when catalog-backed (nullable for a custom item), description/name snapshot, unit price in cents, positive integer quantity.
-- `Cart`: lines and derived total. Do not persist the active sale by default; decide whether interrupted-sale recovery is needed.
+- `Cart`: lines and derived total. Proposed default is not to persist an active sale; offline reload/recovery behavior remains to be confirmed in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 - Keep distinct custom items as separate lines, or merge only identical description + unit-price lines. Historical line values must not be read back from mutable product config.
 
-### Optional saved invoice (PostgreSQL candidate)
+### Saved invoice (PostgreSQL)
 
-- `Invoice`: durable ID, created timestamp, optional human invoice number, currency, computed total in cents.
-- `InvoiceLine`: invoice ID, description/name snapshot, optional product ID reference, unit price cents, quantity, extended amount cents.
-- Enforce a foreign key from invoice lines to invoice; historical data should survive product rename/price changes (product reference may be null if deletion is allowed). Store a total derived from the lines or validate it transactionally on save. Avoid floating-point numeric storage.
-- If the invoice number must be sequential, allocate it transactionally in PostgreSQL; legacy filename numbering is not a reliable uniqueness mechanism. Otherwise use an opaque unique ID and avoid imposing fiscal numbering requirements without owner confirmation.
+- Saved invoices are required as informational/analysis records, not statutory invoices. No VAT/tax fields or sequential human invoice numbering are required.
+- Keep the PostgreSQL shape intentionally small: invoice primary key, `timestamptz`, total in integer cents, and a `jsonb` data column containing a free-form invoice representation. Include a stable invoice ID, actor email, line snapshots, quantities, chargeable totals, donation details, and other useful snapshot values in JSON. This denormalization preserves historical product names/prices.
+- The browser keeps an offline queue/cache and uploads queued invoices when the server returns. Generate a stable client-side primary key before queueing and make API writes idempotent by key so retries cannot duplicate invoices. Offline storage must survive reloads after the initial app/config load.
 
-### Optional cash drawer
+### Cash drawer and audit ledger
 
-Legacy cash is one integer balance in a config file. If retained, model it as one current balance and preferably append-only adjustment/sale events rather than silently overwriting the balance. Whether drawer state belongs in browser storage or PostgreSQL depends on terminal, recovery, and audit decisions. No inventory entity or stock movement exists or is required by current evidence.
+- Cash tracking is required. Keep current balance and an append-only audit ledger in browser local storage; expose a small view to inspect it. Suggested entry fields: stable ID, timestamp, amount delta, resulting balance or absolute-set amount, reason (`sale`, `donation`, `manual set`, `manual subtract`), and actor email. The drawer can be set to an absolute balance at any time. Since this is browser storage, it is best-effort history, can be cleared/modified by the browser user, and is not tamper-evident.
+- Regular sale additions affect drawer balance, consistent with legacy coupling; donations affect drawer balance but are excluded from invoice total. Undo/clear behavior must create compensating ledger entries rather than silently deleting history. Exact timing/clear semantics remain open below.
+- The ledger is per browser profile/device, not shared through PostgreSQL. No inventory entity or stock movement exists or is required by current evidence.
 
 ## Persistence boundaries to decide
 
-The desired stack includes PostgreSQL, but the requested product configuration is browser-local and saved invoices are optional. A coherent minimal arrangement is: React owns local configuration and transient cart; Rust exposes invoice endpoints backed by PostgreSQL only if invoice persistence is selected. If invoices are disabled, the required role of Rust/PostgreSQL remains unclear. Do not add sync, accounts, or multi-terminal semantics merely to justify the backend.
+PostgreSQL owns products and saved invoices. Rust provides the API; React caches the catalog and pending invoice queue locally for offline checkout. The cash balance/audit ledger stays browser-local. Offline support begins only after the app and product configuration have first loaded successfully online; first-visit offline page loading/PWA precaching is deferred.
 
-Clarify whether browser-local configuration is the source of truth and whether export/import/backup is needed. Browser-local data is per browser profile and is not shared across devices. If PostgreSQL must be authoritative for configuration, that changes the stated local-first boundary and needs explicit agreement.
+Authentik provides OIDC. The frontend handles tokens and obtains the current user's email for audit. No backend sessions or in-app RBAC are wanted. The API still needs a defined way to authenticate/validate frontend requests; see [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
 
 ## Existing data and migration
 
-- The catalog exists only in source code: `_Sell/Service/DefaultProductRegistry.cs` (13 current entries). There is no product database or editable product file. Recreate reviewed seed values in the new configuration; do not import the stale `screenshot.png` contents as canonical.
-- Legacy receipt files, if present on an old installation, are plain text in `%AppData%/.xxyy/_sell/rechnungen/`. Invoice numbering and cash balance are plain-text files `rechnungen.int.cfg.txt` and `cash.int.cfg.txt` in that app directory (`_Sell/App.xaml.cs:19-24, 40-89`). These files are not present in this repository.
-- Receipt text embeds formatted display strings and header rows, not a clean structured line format. Migration to invoice records is possible only with a parser and review; determine whether any actual historical files must be imported. Otherwise start new persistence without legacy-history migration.
+- No legacy data migration is required. Seed the new PostgreSQL product table from `_Sell/Service/DefaultProductRegistry.cs` (13 current entries) at database initialization. The owner confirmed the code is current and the screenshot is outdated.
+- Legacy receipt files, invoice numbering, and cash-balance files are not to be imported. Existing receipts are plain text with formatted display strings and header rows, not clean structured records.
 - No external database, POS device, printer, payment terminal, cloud API, or other integration is referenced in the app source. Existing external interaction is limited to local filesystem receipt/config files and opening Windows Explorer from Tools.
