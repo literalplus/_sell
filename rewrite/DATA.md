@@ -13,7 +13,7 @@ The legacy implementation has only `Product` and `Price` as explicit model class
 ### Active cart
 
 - `CartLine`: product ID when catalog-backed (nullable for a custom item), description/name snapshot, unit price in cents, positive integer quantity.
-- `Cart`: lines and derived total. Proposed default is not to persist an active sale; offline reload/recovery behavior remains to be confirmed in [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
+- `Cart`: lines and derived total. Keep the active sale in memory only; do not restore it after reload/close in the first iteration. A discard action writes compensating cash-ledger entries; a save/queued invoice keeps its drawer changes.
 - Keep distinct custom items as separate lines, or merge only identical description + unit-price lines. Historical line values must not be read back from mutable product config.
 
 ### Saved invoice (PostgreSQL)
@@ -24,15 +24,15 @@ The legacy implementation has only `Product` and `Price` as explicit model class
 
 ### Cash drawer and audit ledger
 
-- Cash tracking is required. Keep current balance and an append-only audit ledger in browser local storage; expose a small view to inspect it. Suggested entry fields: stable ID, timestamp, amount delta, resulting balance or absolute-set amount, reason (`sale`, `donation`, `manual set`, `manual subtract`), and actor email. The drawer can be set to an absolute balance at any time. Since this is browser storage, it is best-effort history, can be cleared/modified by the browser user, and is not tamper-evident.
-- Regular sale additions affect drawer balance, consistent with legacy coupling; donations affect drawer balance but are excluded from invoice total. Undo/clear behavior must create compensating ledger entries rather than silently deleting history. Exact timing/clear semantics remain open below.
+- Cash tracking is required. Initialize the balance at €0. Keep current balance and an append-only audit ledger in browser local storage; expose a small view to inspect it. Suggested entry fields: stable ID, timestamp, amount delta, resulting balance or absolute-set amount, reason (`sale`, `donation`, `manual set`, `manual subtract`, `reversal`), and actor email. The drawer can be set at any time; setting/subtraction must clamp the balance at €0 so it cannot become negative. Since this is browser storage, it is best-effort history, can be cleared/modified by the browser user, and is not tamper-evident.
+- Regular sale additions affect drawer balance, consistent with legacy coupling; donations affect drawer balance but are excluded from invoice total. Undo/discard creates compensating ledger entries rather than silently deleting history.
 - The ledger is per browser profile/device, not shared through PostgreSQL. No inventory entity or stock movement exists or is required by current evidence.
 
 ## Persistence boundaries to decide
 
-PostgreSQL owns products and saved invoices. Rust provides the API; React caches the catalog and pending invoice queue locally for offline checkout. The cash balance/audit ledger stays browser-local. Offline support begins only after the app and product configuration have first loaded successfully online; first-visit offline page loading/PWA precaching is deferred.
+PostgreSQL owns products and saved invoices. Rust provides the API; React fetches the catalog on page load and keeps it for the active session. There is one concurrent user and no live sync. The pending invoice queue persists in browser local storage; after offline use it uploads when the app is next open online. The cash balance/audit ledger stays browser-local. Offline support begins only after app/catalog load and applies only while that loaded page remains open. Offline page refresh/PWA precaching and active-cart recovery are deferred.
 
-Authentik provides OIDC. The frontend handles tokens and obtains the current user's email for audit. No backend sessions or in-app RBAC are wanted. The API still needs a defined way to authenticate/validate frontend requests; see [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md).
+Authentik provides OIDC. OIDC issuer/client/audience/scope/redirect settings are supplied at runtime. The frontend uses authorization code with PKCE and handles tokens; the stateless API validates bearer tokens and obtains the `email` claim for audit, regardless of `email_verified`. Users are manually provisioned by admins. No backend sessions or in-app RBAC are wanted. Local offline work can continue after token expiry using the identity captured at authentication; uploading queued invoices requires a fresh valid token. Derive identity from validated token claims, never a client-supplied email field.
 
 ## Existing data and migration
 
