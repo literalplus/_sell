@@ -6,7 +6,7 @@
 
 **Confirmed (legacy):** `_Sell/Service/DefaultProductRegistry.cs` defines 13 products with integer IDs, names, euro prices, and optional display labels. `_Sell/Action/ProductGrid.cs` and `ProductGridPage.cs` place actions in a 3-column by 4-row grid; the first page also contains `Sonstiges` and `Spende`, leaving three catalog products on the second page. Page navigation wraps at either end. Product buttons show a name, price, and keyboard shortcut (`_Sell/Action/GridHotKeys.cs`). The catalog is compiled into the app, not edited in a settings screen.
 
-**Decision:** products are server-owned PostgreSQL data, maintained in a settings screen. Seed the 13 source-code products from `_Sell/Service/DefaultProductRegistry.cs` at database initialization; the owner confirmed these values are current and the screenshot is obsolete. Keep the `Sonstiges` and `Spende` special actions.
+**Decision:** products are server-owned PostgreSQL data, maintained in a settings screen. Seed the 13 products in [`CATALOG.toml`](CATALOG.toml) at database initialization; this is the verified current catalog snapshot, and the screenshot is obsolete. Keep the `Sonstiges` and `Spende` special actions.
 
 **Decision (web):** fetch the authoritative catalog from PostgreSQL on page load and cache it for the loaded app session. Product edits are persisted server-side; other loaded sessions do not receive live updates, and a page reload is needed to fetch the latest catalog. Product editing requires connectivity.
 
@@ -43,7 +43,7 @@ The `×` keyboard action captures the current integer as a quantity; selecting a
 - **Cash drawer:** required. Legacy balance is an integer in `cash.int.cfg.txt`; regular sale items added through `AddPriceToList` increase it, and context-menu actions set an absolute amount or subtract a typed amount (`MainWindow.xaml.cs:107-138, 225-255, 579-587`; `App.xaml.cs:65-89, 117-139`). The rewrite starts at €0; balance changes happen as lines are added, and undo/discard adds compensating local-ledger entries. Balance adjustments clamp at €0 and cannot make the balance negative. A local-storage ledger view is available. No payment terminal or tender-record workflow is wanted.
 - **Amount received/change:** `GGB` computes entered amount minus total and can show a negative result; it neither validates tender nor records payment. Payments are cash. Keep a simple change helper; denomination/banknote selection is a future idea, not current scope.
 - **Receipt defects:** invoice text generation writes the UI's header/separator rows as if they were sale lines (`MainWindow.xaml.cs:401-408`). The file name has minute precision and may collide/overwrite; there is no collision handling. A list-length mismatch returns before closing the file, while the method still reaches clear-all. These are implementation defects, not target requirements.
-- **Catalog evidence conflict (resolved):** the source registry is the current catalog; the screenshot is outdated. Seed the current 13 source entries.
+- **Catalog evidence conflict (resolved):** the current catalog is captured in [`CATALOG.toml`](CATALOG.toml); the screenshot is outdated.
 
 ## Acceptance criteria for the web core
 

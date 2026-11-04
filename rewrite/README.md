@@ -7,6 +7,7 @@ This folder captures the behavior of the existing `_Sell` Windows/WPF point-of-s
 - [REQUIREMENTS.md](REQUIREMENTS.md) — workflows, observed rules/quirks, and acceptance criteria.
 - [UI.md](UI.md) — existing interaction model and proposed browser interactions.
 - [DATA.md](DATA.md) — conceptual entities, persistence boundaries, and legacy data.
+- [CATALOG.toml](CATALOG.toml) — complete snapshot of the active legacy product catalog for initial seeding.
 - [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) — decisions that materially affect implementation.
 
 ## Purpose and scope
@@ -21,4 +22,4 @@ The rewrite should preserve quick sale entry while adapting it for browser use. 
 - **Proposed (web):** implementation-oriented adaptation, not a claim about the old app.
 - **Needs decision:** an ambiguity, implementation choice, or apparent legacy defect that should not be guessed silently.
 
-Useful source references are relative to the repository root. The primary logic is in `_Sell/MainWindow.xaml.cs`, the catalog in `_Sell/Service/DefaultProductRegistry.cs`, money in `_Sell/Model/Price.cs`, layout in `_Sell/MainWindow.xaml`, and file persistence in `_Sell/App.xaml.cs`.
+This folder is intended to be usable on its own by the implementing agent. Code paths mentioned in the documents are provenance references for this analysis; they are not required to implement the rewrite. The seed data is fully captured in `CATALOG.toml`, which contains all 13 active products, stable legacy IDs, order, display labels, and prices in cents. The old screenshot is outdated; use the TOML snapshot rather than the screenshot as the starting catalog. The product table remains editable after seeding.

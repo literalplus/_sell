@@ -8,7 +8,7 @@ The legacy implementation has only `Product` and `Price` as explicit model class
 
 - `Product`: stable ID, name, optional display label, price in integer minor units, display/order position, enabled flag.
 - Currency is currently EUR. Keep price as integer cents. A product tile displays the optional display label when present and otherwise the name.
-- Store the authoritative catalog in PostgreSQL and manage it through the settings UI. Seed it from the 13 current entries in `_Sell/Service/DefaultProductRegistry.cs` during database initialization. The browser may cache the fetched catalog to support checkout after connectivity is lost; cache is not authoritative. Product editing requires the server.
+- Store the authoritative catalog in PostgreSQL and manage it through the settings UI. Seed it from [`CATALOG.toml`](CATALOG.toml) during database initialization. The browser may cache the fetched catalog to support checkout after connectivity is lost; cache is not authoritative. Product editing requires the server.
 
 ### Active cart
 
@@ -36,6 +36,6 @@ Authentik provides OIDC. OIDC issuer/client/audience/scope/redirect settings are
 
 ## Existing data and migration
 
-- No legacy data migration is required. Seed the new PostgreSQL product table from `_Sell/Service/DefaultProductRegistry.cs` (13 current entries) at database initialization. The owner confirmed the code is current and the screenshot is outdated.
+- No legacy data migration is required. Seed the new PostgreSQL product table from [`CATALOG.toml`](CATALOG.toml), which snapshots all 13 active products. The source code is current and the screenshot is outdated.
 - Legacy receipt files, invoice numbering, and cash-balance files are not to be imported. Existing receipts are plain text with formatted display strings and header rows, not clean structured records.
 - No external database, POS device, printer, payment terminal, cloud API, or other integration is referenced in the app source. Existing external interaction is limited to local filesystem receipt/config files and opening Windows Explorer from Tools.
