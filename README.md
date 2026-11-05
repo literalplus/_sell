@@ -1,5 +1,9 @@
 _Sell
 =====
+
+**Unmaintained!** Replaced by the slop rewrite which is easier to maintain and uses modern technologies and doesn't require
+Windows: https://github.com/literalplus/sell_guy/tree/main - doesn't have as much personality but works just as well
+
 This is a simple point-of-sale application created in something like 2012. Everything is configured in the code, and
 it only works on Windows. The code is basically a big pile of hacks that somehow function, but while ignoring all C#
 code style guidelines.
